@@ -12,8 +12,16 @@ import { LoginPage } from '@/features/auth/components/LoginPage'
 import { RegisterPage } from '@/features/auth/components/RegisterPage'
 import { NotFoundPage } from '@/components/shared/NotFoundPage'
 import { UnauthorizedPage } from '@/components/shared/UnauthorizedPage'
+import { lazy } from 'react'
 
-import { AdminDashboardPage } from '@/features/auth/components/AdminDashboardPlaceholder'
+const AdminDashboardPage = lazy(() => import('@/features/admin').then(m => ({ default: m.AdminDashboardPage })))
+const UserManagementPage = lazy(() => import('@/features/admin').then(m => ({ default: m.UserManagementPage })))
+const HelperManagementPage = lazy(() => import('@/features/admin').then(m => ({ default: m.HelperManagementPage })))
+const TaskManagementPage = lazy(() => import('@/features/admin').then(m => ({ default: m.TaskManagementPage })))
+const DisputeManagementPage = lazy(() => import('@/features/admin').then(m => ({ default: m.DisputeManagementPage })))
+const TransactionManagementPage = lazy(() => import('@/features/admin').then(m => ({ default: m.TransactionManagementPage })))
+const WalletManagementPage = lazy(() => import('@/features/admin').then(m => ({ default: m.WalletManagementPage })))
+const AnalyticsPage = lazy(() => import('@/features/admin').then(m => ({ default: m.AnalyticsPage })))
 
 import { 
   UserDashboard,
@@ -30,10 +38,16 @@ import {
   CurrentTaskPage,
   HelperProfile
 } from '@/features/helper'
+import { WalletPage } from '@/features/wallet'
+import { NotificationPage } from '@/features/notification'
+import { LandingPage } from '@/features/landing'
 
 const router = createBrowserRouter([
   {
     path: '/',
+    element: <LandingPage />
+  },
+  {
     element: <GuestGuard />,
     children: [
       {
@@ -81,6 +95,14 @@ const router = createBrowserRouter([
               {
                 path: 'history',
                 element: <TaskHistoryPage />
+              },
+              {
+                path: 'wallet',
+                element: <WalletPage />
+              },
+              {
+                path: 'notifications',
+                element: <NotificationPage />
               }
             ]
           }
@@ -112,6 +134,14 @@ const router = createBrowserRouter([
               {
                 path: 'profile',
                 element: <HelperProfile />
+              },
+              {
+                path: 'wallet',
+                element: <WalletPage />
+              },
+              {
+                path: 'notifications',
+                element: <NotificationPage />
               }
             ]
           }
@@ -127,6 +157,34 @@ const router = createBrowserRouter([
               {
                 path: 'dashboard',
                 element: <AdminDashboardPage />
+              },
+              {
+                path: 'users',
+                element: <UserManagementPage />
+              },
+              {
+                path: 'helpers',
+                element: <HelperManagementPage />
+              },
+              {
+                path: 'tasks',
+                element: <TaskManagementPage />
+              },
+              {
+                path: 'disputes',
+                element: <DisputeManagementPage />
+              },
+              {
+                path: 'transactions',
+                element: <TransactionManagementPage />
+              },
+              {
+                path: 'wallets',
+                element: <WalletManagementPage />
+              },
+              {
+                path: 'analytics',
+                element: <AnalyticsPage />
               }
             ]
           }

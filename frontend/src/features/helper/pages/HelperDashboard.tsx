@@ -1,8 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Search, List, Wallet } from 'lucide-react'
 import { useHelperDashboard } from '../hooks'
-import { HelperStatsCard } from '../components/HelperStatsCard'
-import { CurrentTaskCard } from '../components/CurrentTaskCard'
+import { HelperStatsCard, CurrentTaskCard } from '../components'
 import { TaskCard } from '@/features/tasks/components/TaskCard'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Button } from '@/components/ui/Button'
@@ -95,13 +94,13 @@ export function HelperDashboard() {
               </Button>
             </div>
             
-            {data?.nearby_tasks && data.nearby_tasks.length > 0 ? (
-              <div className="space-y-3">
-                {data.nearby_tasks.slice(0, 3).map((task) => (
-                  <TaskCard key={task.id} task={task} />
-                ))}
-              </div>
-            ) : (
+{data?.nearby_tasks && data.nearby_tasks.length > 0 ? (
+               <div className="space-y-3">
+                 {data.nearby_tasks.slice(0, 3).map((task) => (
+                   <TaskCard key={task.id} task={task} basePath="helper" />
+                 ))}
+               </div>
+             ) : (
               <EmptyState
                 icon={<List size={48} />}
                 title="No tasks available"

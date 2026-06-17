@@ -5,8 +5,8 @@ import { PageContainer } from '@/components/layout/PageContainer'
 
 const helperNavItems: NavItem[] = [
   { icon: 'Home', label: 'Home', path: '/helper/dashboard' },
-  { icon: 'Search', label: 'Find', path: '/helper/available-tasks' },
-  { icon: 'ClipboardList', label: 'Tasks', path: '/helper/tasks' },
+  { icon: 'Search', label: 'Find', path: '/helper/tasks' },
+  { icon: 'ClipboardList', label: 'Tasks', path: '/helper/current-task' },
   { icon: 'Wallet', label: 'Wallet', path: '/helper/wallet' },
   { icon: 'User', label: 'Profile', path: '/helper/profile' }
 ]

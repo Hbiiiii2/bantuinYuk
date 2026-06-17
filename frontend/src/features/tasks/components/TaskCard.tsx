@@ -8,19 +8,29 @@ import type { Task } from '../task.types'
 
 interface TaskCardProps {
   task: Task
+  basePath?: 'user' | 'helper'
   className?: string
 }
 
-export function TaskCard({ task, className }: TaskCardProps) {
+export function TaskCard({ task, basePath = 'user', className }: TaskCardProps) {
   const navigate = useNavigate()
   
   return (
     <Card 
       className={cn(
-        "cursor-pointer hover:shadow-md transition-shadow",
+        "cursor-pointer hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent",
         className
       )}
-      onClick={() => navigate(`/user/tasks/${task.id}`)}
+      onClick={() => navigate(`/${basePath}/tasks/${task.id}`)}
+      tabIndex={0}
+      role="button"
+      aria-label={`Task: ${task.title}. Price: ${formatCurrency(task.price)}. Status: ${task.status}.`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          navigate(`/${basePath}/tasks/${task.id}`)
+        }
+      }}
     >
       <div className="p-4">
         <div className="flex items-start justify-between gap-2 mb-2">

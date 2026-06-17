@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import { AppHeader } from '@/components/layout/AppHeader'
 import { SidebarNavigation, type SidebarItem } from '@/components/layout/SidebarNavigation'
 import { PageContainer } from '@/components/layout/PageContainer'
+import { ToastContainer } from '@/features/admin/components/ToastContainer'
 
 const adminNavItems: SidebarItem[] = [
   { icon: 'LayoutDashboard', label: 'Dashboard', path: '/admin/dashboard' },
@@ -12,8 +13,7 @@ const adminNavItems: SidebarItem[] = [
   { icon: 'AlertTriangle', label: 'Disputes', path: '/admin/disputes' },
   { icon: 'CreditCard', label: 'Transactions', path: '/admin/transactions' },
   { icon: 'Wallet', label: 'Wallets', path: '/admin/wallets' },
-  { icon: 'Star', label: 'Reviews', path: '/admin/reviews' },
-  { icon: 'Tag', label: 'Categories', path: '/admin/categories' }
+  { icon: 'Tag', label: 'Analytics', path: '/admin/analytics' }
 ]
 
 export function AdminLayout() {
@@ -34,10 +34,14 @@ export function AdminLayout() {
         />
         <main className="flex-1">
           <PageContainer>
-            <Outlet />
+            <Suspense fallback={<div className="p-8 text-center text-sm font-semibold text-gray-500">Loading page...</div>}>
+              <Outlet />
+            </Suspense>
           </PageContainer>
         </main>
       </div>
+
+      <ToastContainer />
     </div>
   )
 }

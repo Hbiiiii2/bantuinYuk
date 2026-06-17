@@ -6,14 +6,14 @@ import {
 } from 'lucide-react'
 import { useCurrentTask, useStartTask, useSubmitTask, useTaskProgress } from '../hooks'
 import { TaskStatusBadge } from '@/features/tasks/components/TaskStatusBadge'
-import { ProgressForm } from '../components/ProgressForm'
+import { ProgressForm, ProgressTimeline } from '../components'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { SkeletonCard } from '@/components/shared/SkeletonCard'
 import { ErrorState } from '@/components/shared/ErrorState'
 import { EmptyState } from '@/components/shared/EmptyState'
-import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
+import { formatCurrency, formatDate } from '@/lib/utils'
 
 export function CurrentTaskPage() {
   const navigate = useNavigate()
@@ -167,21 +167,7 @@ export function CurrentTaskPage() {
               </CardHeader>
               <CardContent>
                 {progress && progress.length > 0 ? (
-                  <div className="space-y-4">
-                    {progress.map((item: any) => (
-                      <div key={item.id} className="border-l-2 border-primary pl-4 pb-4">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-medium text-gray-900">
-                            {item.helper_name}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {formatDateTime(item.created_at)}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-600">{item.description}</p>
-                      </div>
-                    ))}
-                  </div>
+                  <ProgressTimeline progress={progress} />
                 ) : (
                   <p className="text-gray-500 text-center py-4">No progress updates yet</p>
                 )}

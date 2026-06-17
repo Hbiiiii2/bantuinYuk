@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { 
-  Calendar, MapPin, Tag, DollarSign, User, Star, 
+  Calendar, MapPin, Tag, DollarSign, User,
   FileText, Check
 } from 'lucide-react'
 import { useState } from 'react'

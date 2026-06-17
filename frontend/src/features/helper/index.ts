@@ -1,21 +1,10 @@
-export type {
-  HelperProfile,
-  HelperStats,
-  RatingSummary,
-  AvailableTask,
-  HelperDashboardData,
-  UpdateProfileRequest,
-  UpdateLocationRequest,
-  CreateProgressRequest,
-  TaskListParams
-} from './types'
-
 export {
   VerificationBadge,
   HelperStatsCard,
   CurrentTaskCard,
   DistanceBadge,
-  ProgressForm
+  ProgressForm,
+  ProgressTimeline
 } from './components'
 
 export {
@@ -43,3 +32,14 @@ export {
   useCreateProgress,
   useUpdateProfile
 } from './hooks'
+
+export type {
+  HelperStats,
+  RatingSummary,
+  AvailableTask,
+  HelperDashboardData,
+  UpdateProfileRequest,
+  UpdateLocationRequest,
+  CreateProgressRequest,
+  TaskListParams
+} from './types'

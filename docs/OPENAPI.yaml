@@ -1223,7 +1223,7 @@ paths:
                       data:
                         $ref: '#/components/schemas/Location'
   
-  /helpers/tasks:
+  /helpers/my-tasks:
     get:
       tags: [Helper]
       summary: List my tasks
@@ -1318,7 +1318,7 @@ paths:
                       data:
                         $ref: '#/components/schemas/Task'
   
-  /helpers/tasks/{id}/submit:
+  /helpers/{id}/submit:
     post:
       tags: [Helper]
       summary: Submit task
@@ -1490,7 +1490,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
   
   # ============ PROGRESS ENDPOINTS ============
-  /tasks/{id}/progress:
+  /helpers/tasks/{id}/progress:
     get:
       tags: [Progress]
       summary: List progress
@@ -1687,17 +1687,11 @@ paths:
                           total:
                             type: integer
   
-  /helpers/{id}/rating-summary:
+  /helpers/rating-summary:
     get:
       tags: [Review]
       summary: Get helper rating summary
-      description: Get rating summary for a helper.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
+      description: Get rating summary for current helper.
       responses:
         '200':
           description: Success

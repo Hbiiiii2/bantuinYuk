@@ -106,7 +106,7 @@ export function AvailableTasksPage() {
       ) : data?.data && data.data.length > 0 ? (
         <div className="space-y-3">
           {data.data.map((task) => (
-            <TaskCard key={task.id} task={task} />
+            <TaskCard key={task.id} task={task} basePath="helper" />
           ))}
           
           {/* Pagination */}

@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 import { useCreateProgress } from '../hooks'
+import { helperService } from '../services/helper.service'
 
 const progressSchema = z.object({
   description: z.string().min(10, 'Description must be at least 10 characters')
@@ -21,6 +22,8 @@ interface ProgressFormProps {
 
 export function ProgressForm({ taskId, onSuccess }: ProgressFormProps) {
   const [files, setFiles] = useState<File[]>([])
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
   const createProgress = useCreateProgress()
   
   const {
@@ -34,18 +37,31 @@ export function ProgressForm({ taskId, onSuccess }: ProgressFormProps) {
   
   const onSubmit = async (data: ProgressFormData) => {
     try {
+      setSubmitError(null)
+      setUploading(true)
+      const uploadedIds: number[] = []
+      
+      if (files && files.length > 0) {
+        for (const file of files) {
+          const attachment = await helperService.uploadAttachment(taskId, file)
+          uploadedIds.push(attachment.id)
+        }
+      }
+      
       await createProgress.mutateAsync({
         taskId,
         data: {
           description: data.description,
-          attachment_ids: []
+          attachment_ids: uploadedIds
         }
       })
       reset()
       setFiles([])
       onSuccess?.()
-    } catch (error) {
-      // Error handled by mutation
+    } catch (err: any) {
+      setSubmitError(err?.message || 'Failed to submit progress. Please try again.')
+    } finally {
+      setUploading(false)
     }
   }
   
@@ -61,13 +77,19 @@ export function ProgressForm({ taskId, onSuccess }: ProgressFormProps) {
   return (
     <Card>
       <CardContent>
-        <h3 className="font-medium text-gray-900 mb-3">Add Progress Update</h3>
+        <h3 className="font-medium text-gray-900 mb-3" id="progress-form-title">Add Progress Update</h3>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+        <form 
+          onSubmit={handleSubmit(onSubmit)} 
+          className="space-y-3"
+          aria-labelledby="progress-form-title"
+        >
           <Textarea
             placeholder="Describe your progress..."
             error={errors.description?.message}
             {...register('description')}
+            aria-label="Progress description"
+            aria-required="true"
           />
           
           <div className="flex items-center gap-2">
@@ -84,6 +106,8 @@ export function ProgressForm({ taskId, onSuccess }: ProgressFormProps) {
               variant="secondary"
               size="sm"
               onClick={() => document.getElementById('progress-file')?.click()}
+              aria-label="Attach file to progress update"
+              className="min-h-[44px]"
             >
               <Upload size={14} className="mr-1" />
               Attach File
@@ -92,14 +116,15 @@ export function ProgressForm({ taskId, onSuccess }: ProgressFormProps) {
           </div>
           
           {files.length > 0 && (
-            <div className="space-y-1">
+            <div className="space-y-1" aria-label="Attached files list">
               {files.map((file, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm">
                   <span className="truncate flex-1 text-gray-600">{file.name}</span>
                   <button
                     type="button"
                     onClick={() => removeFile(index)}
-                    className="text-gray-400 hover:text-danger"
+                    className="text-gray-400 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger rounded-sm p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    aria-label={`Remove attached file ${file.name}`}
                   >
                     <X size={14} />
                   </button>
@@ -108,13 +133,20 @@ export function ProgressForm({ taskId, onSuccess }: ProgressFormProps) {
             </div>
           )}
           
+          {submitError && (
+            <div className="text-sm font-medium text-danger" role="alert">
+              {submitError}
+            </div>
+          )}
+          
           <Button 
             type="submit" 
-            className="w-full"
-            loading={createProgress.isPending}
-            disabled={createProgress.isPending}
+            className="w-full min-h-[44px]"
+            loading={createProgress.isPending || uploading}
+            disabled={createProgress.isPending || uploading}
+            aria-label="Submit progress update"
           >
-            Submit Progress
+            {uploading ? 'Uploading attachments...' : 'Submit Progress'}
           </Button>
         </form>
       </CardContent>

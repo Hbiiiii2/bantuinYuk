@@ -3,11 +3,16 @@ import { Shield, ShieldCheck, ShieldX } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface VerificationBadgeProps {
-  status: 'pending' | 'verified' | 'rejected'
+  status?: 'pending' | 'verified' | 'rejected' | null
   className?: string
 }
 
 const statusConfig = {
+  unverified: {
+    label: 'Unverified',
+    variant: 'default' as const,
+    icon: Shield
+  },
   pending: { 
     label: 'Pending Verification', 
     variant: 'warning' as const,
@@ -26,7 +31,8 @@ const statusConfig = {
 }
 
 export function VerificationBadge({ status, className }: VerificationBadgeProps) {
-  const config = statusConfig[status]
+  const activeStatus = status || 'unverified'
+  const config = statusConfig[activeStatus] || statusConfig.unverified
   const Icon = config.icon
   
   return (

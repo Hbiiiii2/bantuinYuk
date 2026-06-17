@@ -37,7 +37,7 @@ export function HelperProfile() {
       await updateProfile.mutateAsync(editForm)
       setIsEditing(false)
       refetch()
-    } catch (error) {
+    } catch {
       // Error handled by mutation
     }
   }

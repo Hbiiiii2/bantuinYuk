@@ -1,18 +1,21 @@
 import { Bell } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useUnreadCount } from '@/features/notification'
+import { useAuthStore } from '@/stores/auth.store'
 import { cn } from '@/lib/utils'
 
 interface NotificationBadgeProps {
-  count?: number
   className?: string
 }
 
-export function NotificationBadge({ count = 0, className }: NotificationBadgeProps) {
+export function NotificationBadge({ className }: NotificationBadgeProps) {
   const navigate = useNavigate()
+  const { user } = useAuthStore()
+  const { data: count = 0 } = useUnreadCount()
   
   const getNotificationPath = () => {
-    // Default to user notifications, will be updated based on role
-    return '/user/notifications'
+    const role = user?.role || 'user'
+    return `/${role}/notifications`
   }
   
   const formatCount = (num: number): string => {
