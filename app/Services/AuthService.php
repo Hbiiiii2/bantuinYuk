@@ -69,7 +69,6 @@ class AuthService extends BaseService
                 throw BusinessException::failed('Failed to create user');
             }
 
-            // Insert into auth_identities for email_password login
             $this->db->table('auth_identities')->insert([
                 'user_id'  => $userId,
                 'type'     => 'email_password',
@@ -77,6 +76,7 @@ class AuthService extends BaseService
                 'secret'   => $data['email'],
                 'secret2'  => $hashedPassword,
             ]);
+            log_message('info', 'AUTH IDENTITY INSERTED for user_id=' . $userId . ', email=' . $data['email']);
 
             // Add to default group
             $defaultGroup = setting('AuthGroups.defaultGroup') ?? 'user';
@@ -84,6 +84,7 @@ class AuthService extends BaseService
                 'user_id' => $userId,
                 'group'   => $defaultGroup,
             ]);
+            log_message('info', 'AUTH GROUP INSERTED for user_id=' . $userId . ', group=' . $defaultGroup);
 
             $this->db->transComplete();
 
@@ -123,8 +124,8 @@ class AuthService extends BaseService
             'password' => 'Password',
         ]);
 
-        // Pure AccessTokens authentication - no session dependency
-        $tokenAuth = auth('tokens');
+        // Use session authenticator for email/password login
+        $tokenAuth = auth('session');
 
         $result = $tokenAuth->attempt([
             'email'    => $data['email'],

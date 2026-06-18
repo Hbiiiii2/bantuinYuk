@@ -6,37 +6,37 @@ const services = [
     title: 'Bersih Rumah',
     description: 'Sapu, pel, pembersihan toilet, cuci piring, hingga merapikan kebun harian.',
     icon: Sparkles,
-    color: 'bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-600 hover:text-white'
+    color: 'bg-blue-50 text-blue-600 border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600'
   },
   {
     title: 'Pindahan',
     description: 'Jasa angkut barang kos, apartemen, atau rumah ke lokasi baru Anda dengan aman.',
     icon: Truck,
-    color: 'bg-cyan-50 text-cyan-600 border-cyan-100 hover:bg-cyan-600 hover:text-white'
+    color: 'bg-cyan-50 text-cyan-600 border-cyan-100 group-hover:bg-cyan-600 group-hover:text-white group-hover:border-cyan-600'
   },
   {
     title: 'Belanja Titipan',
     description: 'Bantuan antre dan belanja kebutuhan bulanan, pasar harian, atau makanan titipan.',
     icon: ShoppingCart,
-    color: 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white'
+    color: 'bg-emerald-50 text-emerald-600 border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600'
   },
   {
     title: 'Perbaikan Rumah',
     description: 'Mengatasi kran bocor, perbaikan lampu, instalasi kipas, hingga cat dinding.',
     icon: Wrench,
-    color: 'bg-amber-50 text-amber-600 border-amber-100 hover:bg-amber-600 hover:text-white'
+    color: 'bg-amber-50 text-amber-600 border-amber-100 group-hover:bg-amber-600 group-hover:text-white group-hover:border-amber-600'
   },
   {
     title: 'Antar Barang',
     description: 'Kirim dokumen penting, paket dagangan, atau titipan mendadak ke berbagai tempat.',
     icon: Home,
-    color: 'bg-indigo-50 text-indigo-600 border-indigo-100 hover:bg-indigo-600 hover:text-white'
+    color: 'bg-indigo-50 text-indigo-600 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600'
   },
   {
     title: 'Lainnya',
     description: 'Punya kebutuhan tugas khusus lainnya? Jelaskan secara detail dalam deskripsi tugas.',
     icon: MoreHorizontal,
-    color: 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-800 hover:text-white'
+    color: 'bg-slate-100 text-slate-700 border-slate-200 group-hover:bg-slate-800 group-hover:text-white group-hover:border-slate-800'
   }
 ]
 

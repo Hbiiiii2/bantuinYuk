@@ -38,7 +38,8 @@ class AuthController extends BaseController
             return $this->errorResponse($e->getMessage(), $e->getStatusCode());
 
         } catch (\Exception $e) {
-            return $this->errorResponse('An unexpected error occurred', 500);
+            log_message('error', 'REGISTER ERROR: ' . $e->getMessage() . ' | File: ' . $e->getFile() . ' | Line: ' . $e->getLine());
+            return $this->errorResponse('An unexpected error occurred: ' . $e->getMessage(), 500, (ENVIRONMENT !== 'production' ? ['exception' => get_class($e)] : null));
         }
     }
 

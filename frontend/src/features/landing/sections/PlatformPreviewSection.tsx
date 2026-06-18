@@ -123,23 +123,23 @@ function UserDashboardMockup() {
 
       {/* Grid Status */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase">Task Aktif</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase">Tugas Aktif</p>
             <p className="text-xl font-bold text-slate-900">1</p>
           </div>
           <span className="text-lg bg-blue-50 p-2 rounded-lg text-blue-600">📝</span>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase">Selesai</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase">Tugas Selesai</p>
             <p className="text-xl font-bold text-slate-900">14</p>
           </div>
           <span className="text-lg bg-emerald-50 p-2 rounded-lg text-emerald-600">✅</span>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase">Saldo Wallet</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase">Saldo Dompet</p>
             <p className="text-xl font-bold text-slate-900">Rp 250.000</p>
           </div>
           <span className="text-lg bg-cyan-50 p-2 rounded-lg text-cyan-600">💰</span>
@@ -147,8 +147,8 @@ function UserDashboardMockup() {
       </div>
 
       {/* Current Task Card */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-4 py-3 bg-slate-100/50 border-b border-slate-200 flex items-center justify-between">
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div className="px-4 py-3 bg-slate-100/50 border-b border-slate-200/85 flex items-center justify-between">
           <span className="text-xs font-bold text-slate-700">Tugas Aktif Saat Ini</span>
           <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-bold">Mencari Helper</span>
         </div>
@@ -193,23 +193,23 @@ function HelperDashboardMockup() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-[10px] font-bold text-slate-400 uppercase">Pekerjaan Aktif</p>
             <p className="text-xl font-bold text-slate-900">1</p>
           </div>
           <span className="text-lg bg-amber-50 p-2 rounded-lg text-amber-600">🛠️</span>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-[10px] font-bold text-slate-400 uppercase">Rating</p>
             <p className="text-xl font-bold text-slate-900">4.9 ★</p>
           </div>
           <span className="text-lg bg-emerald-50 p-2 rounded-lg text-emerald-600">⭐</span>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase">Total Earned</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase">Total Pendapatan</p>
             <p className="text-xl font-bold text-slate-900">Rp 1.450.000</p>
           </div>
           <span className="text-lg bg-blue-50 p-2 rounded-lg text-blue-600">💰</span>
@@ -217,7 +217,7 @@ function HelperDashboardMockup() {
       </div>
 
       {/* Active Task progress */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-slate-700">Tugas yang Sedang Dikerjakan</span>
           <span className="text-[10px] bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full font-bold">Sedang Dikerjakan</span>
@@ -286,9 +286,9 @@ function AdminDashboardMockup() {
           </div>
           <p className="text-lg font-bold text-slate-900 text-blue-600">Rp 4.250K</p>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
           <div className="flex items-center justify-between text-slate-400 mb-1">
-            <span className="text-[9px] font-bold uppercase">Dispute</span>
+            <span className="text-[9px] font-bold uppercase">Sengketa</span>
             <AlertTriangle size={14} />
           </div>
           <p className="text-lg font-bold text-red-500">2 Kasus</p>
@@ -313,12 +313,12 @@ function AdminDashboardMockup() {
         </div>
 
         {/* Disputes queue card */}
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
-          <p className="text-xs font-bold text-slate-700">Perselisihan / Dispute Baru</p>
+        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm space-y-3">
+          <p className="text-xs font-bold text-slate-700">Sengketa Baru</p>
           <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-slate-900">Task #1024 (Pindahan)</p>
-              <p className="text-[10px] text-red-500 font-medium">Bantahan pembayaran oleh User</p>
+              <p className="text-xs font-bold text-slate-900">Tugas #1024 (Pindahan)</p>
+              <p className="text-[10px] text-red-500 font-medium">Bantahan pembayaran oleh Pengguna</p>
             </div>
             <button className="text-[9px] font-bold bg-blue-100 text-blue-600 px-2.5 py-1.5 rounded">
               Arbitrase
