@@ -26,6 +26,9 @@
         <a href="<?= base_url('/admin/tasks') ?>" class="px-5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-bold text-sm whitespace-nowrap transition-colors">
             <i class="ph-bold ph-briefcase mr-1.5"></i> Pekerjaan
         </a>
+        <a href="<?= base_url('/admin/disputes') ?>" class="px-5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-bold text-sm whitespace-nowrap transition-colors">
+            <i class="ph-bold ph-warning-octagon mr-1.5"></i> Komplain
+        </a>
     </div>
 
     <!-- Stats Grid -->

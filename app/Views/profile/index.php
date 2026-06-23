@@ -82,6 +82,29 @@
                             <i class="ph-fill ph-check-circle mr-2"></i> Aktif
                         </p>
                     </div>
+
+                    <?php if (($user->getGroups()[0] ?? 'user') === 'helper' && isset($helperProfile)): ?>
+                    <div class="md:col-span-2">
+                        <p class="text-sm font-medium text-slate-500 mb-2">Verifikasi Identitas (KYC)</p>
+                        <?php if ($helperProfile['verification_status'] === 'verified'): ?>
+                            <div class="inline-flex items-center px-4 py-2 rounded-xl bg-green-50 border border-green-100 text-green-700 font-bold text-sm">
+                                <i class="ph-fill ph-check-circle mr-2 text-lg"></i> Akun Anda sudah terverifikasi (KYC)
+                            </div>
+                        <?php else: ?>
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-red-50 border border-red-100">
+                                <div class="mb-3 sm:mb-0">
+                                    <p class="text-sm font-bold text-red-800 flex items-center gap-2">
+                                        <i class="ph-fill ph-warning-circle text-lg"></i> Belum Terverifikasi
+                                    </p>
+                                    <p class="text-xs text-red-600 mt-1">Selesaikan verifikasi identitas (KYC) untuk mulai mengambil pekerjaan.</p>
+                                </div>
+                                <a href="<?= base_url('/helper/kyc') ?>" class="inline-flex items-center justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm">
+                                    Verifikasi Sekarang
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

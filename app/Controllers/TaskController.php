@@ -184,7 +184,7 @@ class TaskController extends BaseController
             $userId = auth()->id();
             $file   = $this->request->getFile('file');
 
-            if (!$file) {
+            if (!$this->validate(['file' => 'uploaded[file]|ext_in[file,jpg,jpeg,png,pdf]|max_size[file,2048]'])) {
                 return $this->errorResponse('No file uploaded', 400);
             }
 

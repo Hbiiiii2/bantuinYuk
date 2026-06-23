@@ -87,33 +87,10 @@
                                 </td>
                                 <td class="p-4 pr-6 text-right">
                                     <?php if (in_array($dispute['status'], ['open', 'under_review'])): ?>
-                                        <div x-data="{ modalOpen: false }">
-                                            <button @click="modalOpen = true" class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-primary-600 hover:bg-primary-50 hover:border-primary-200 transition-colors">
-                                                Tinjau & Putuskan
-                                            </button>
+                                        <a href="<?= base_url('/admin/disputes/' . $dispute['id']) ?>" class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-primary-600 hover:bg-primary-50 hover:border-primary-200 transition-colors">
+                                            Tinjau & Putuskan
+                                        </a>
 
-                                            <!-- Modal -->
-                                            <div x-show="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 text-left" x-cloak>
-                                                <div @click.away="modalOpen = false" class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
-                                                    <h3 class="text-lg font-bold text-slate-900 mb-4">Keputusan Admin</h3>
-                                                    <p class="text-sm text-slate-500 mb-4">Berikan catatan keputusan Anda untuk menyelesaikan atau menolak komplain ini.</p>
-                                                    
-                                                    <form method="post" action="<?= base_url('/admin/disputes/' . $dispute['id'] . '/resolve') ?>" class="mb-2">
-                                                        <?= csrf_field() ?>
-                                                        <textarea name="admin_note" rows="3" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm mb-4" placeholder="Catatan Admin (opsional tapi disarankan)..." required></textarea>
-                                                        <div class="flex gap-2">
-                                                            <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl text-sm transition-colors">
-                                                                Terima & Selesaikan
-                                                            </button>
-                                                            <button type="submit" formaction="<?= base_url('/admin/disputes/' . $dispute['id'] . '/reject') ?>" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl text-sm transition-colors">
-                                                                Tolak Komplain
-                                                            </button>
-                                                        </div>
-                                                    </form>
-                                                    <button @click="modalOpen = false" class="w-full py-2 text-sm font-bold text-slate-500 hover:text-slate-700 mt-2">Batal</button>
-                                                </div>
-                                            </div>
-                                        </div>
                                     <?php else: ?>
                                         <span class="text-xs text-slate-400 font-bold">Closed</span>
                                     <?php endif; ?>

@@ -23,7 +23,8 @@ class TaskModel extends Model
         'deadline_end',
         'status',
         'photo_start',
-        'photo_end'
+        'photo_end',
+        'cancel_reason'
     ];
 
     protected $useSoftDeletes = false;

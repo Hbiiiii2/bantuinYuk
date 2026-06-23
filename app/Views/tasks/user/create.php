@@ -25,8 +25,15 @@
         </div>
     <?php endif; ?>
 
+    <?php if (session()->has('error')): ?>
+        <div class="bg-red-50/80 backdrop-blur-sm border border-red-100 p-4 mb-6 rounded-2xl flex items-start gap-3 animate-fade-in-up">
+            <i class="ph-fill ph-warning-circle text-red-500 text-xl mt-0.5"></i>
+            <p class="text-sm font-bold text-red-800"><?= session('error') ?></p>
+        </div>
+    <?php endif; ?>
+
     <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden p-8">
-        <form action="<?= base_url('/user/tasks/store') ?>" method="post" class="space-y-6">
+        <form action="<?= base_url('/user/tasks/store') ?>" method="post" class="space-y-6" x-data="{ price: <?= old('price') ?? 0 ?>, balance: <?= $wallet['balance'] ?? 0 ?> }">
             <?= csrf_field() ?>
 
             <div>
@@ -48,8 +55,14 @@
                 </div>
                 
                 <div>
-                    <label for="price" class="block text-sm font-semibold text-slate-900 mb-2">Upah (Rp)</label>
-                    <input type="number" name="price" id="price" value="<?= old('price') ?>" min="10000" step="1000" placeholder="Min. 10000" class="w-full rounded-xl border-slate-200 focus:border-primary-500 focus:ring-primary-500 text-slate-900 shadow-sm transition-shadow">
+                    <label for="price" class="block text-sm font-semibold text-slate-900 mb-2">Upah (Rp) <span class="text-slate-400 font-normal ml-1">(Saldo Anda: Rp <?= number_format($wallet['balance'] ?? 0, 0, ',', '.') ?>)</span></label>
+                    <input type="number" name="price" id="price" x-model="price" min="10000" step="1000" placeholder="Min. 10000" class="w-full rounded-xl border-slate-200 focus:border-primary-500 focus:ring-primary-500 text-slate-900 shadow-sm transition-shadow">
+                    
+                    <!-- Insufficient Balance Warning -->
+                    <div x-show="price > balance" x-transition class="mt-2 text-sm text-red-600 flex items-start gap-1">
+                        <i class="ph-fill ph-warning-circle mt-0.5"></i>
+                        <span>Saldo Anda tidak mencukupi untuk upah ini. Silakan <a href="<?= base_url('/wallet') ?>" class="font-bold underline hover:text-red-700">Top Up</a> terlebih dahulu.</span>
+                    </div>
                 </div>
             </div>
 

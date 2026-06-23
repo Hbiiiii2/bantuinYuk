@@ -11,9 +11,16 @@ class ProfileController extends BaseController
     {
         $user = auth()->user();
         
+        $helperProfile = null;
+        if ($user->inGroup('helper')) {
+            $helperProfileModel = new \App\Models\HelperProfileModel();
+            $helperProfile = $helperProfileModel->where('user_id', $user->id)->first();
+        }
+        
         return view('profile/index', [
             'title' => 'Profil Saya - Bantuin Yuk',
-            'user'  => $user
+            'user'  => $user,
+            'helperProfile' => $helperProfile
         ]);
     }
 
@@ -40,7 +47,7 @@ class ProfileController extends BaseController
         // Handle photo upload if exists
         $photo = $this->request->getFile('photo');
         if ($photo && $photo->isValid() && ! $photo->hasMoved()) {
-            $rules['photo'] = 'is_image[photo]|mime_in[photo,image/jpg,image/jpeg,image/png]|max_size[photo,2048]';
+            $rules['photo'] = 'ext_in[photo,jpg,jpeg,png,pdf]|max_size[photo,2048]';
         }
 
         if (! $this->validateData($this->request->getPost(), $rules)) {

@@ -77,7 +77,8 @@ class NotificationModel extends Model
      */
     public function markAsRead(int $notificationId, int $userId): bool
     {
-        return $this->where('id', $notificationId)
+        return $this->builder()
+            ->where('id', $notificationId)
             ->where('user_id', $userId)
             ->update(['is_read' => 1]);
     }
@@ -87,9 +88,21 @@ class NotificationModel extends Model
      */
     public function markAllAsRead(int $userId): bool
     {
-        return $this->where('user_id', $userId)
+        return $this->builder()
+            ->where('user_id', $userId)
             ->where('is_read', 0)
             ->update(['is_read' => 1]);
+    }
+
+    /**
+     * Delete read notifications for user.
+     */
+    public function deleteRead(int $userId): bool
+    {
+        return $this->builder()
+            ->where('user_id', $userId)
+            ->where('is_read', 1)
+            ->delete();
     }
 
     /**

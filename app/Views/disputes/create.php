@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <form action="<?= base_url('/disputes/store/' . $task['id']) ?>" method="post">
+            <form action="<?= base_url('/disputes/store/' . $task['id']) ?>" method="post" enctype="multipart/form-data">
                 <?= csrf_field() ?>
 
                 <div class="mb-6">
@@ -43,14 +43,14 @@
                     <?php endif; ?>
                 </div>
 
-                <!-- Di masa depan bisa tambahkan upload bukti file -->
+                <!-- Lampiran Bukti -->
                 <div class="mb-8">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Lampiran Bukti (Opsional)</label>
-                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center bg-slate-50">
-                        <i class="ph ph-upload-simple text-3xl text-slate-400 mb-2"></i>
-                        <p class="text-sm text-slate-500">Fitur upload bukti sedang dalam pengembangan.</p>
-                        <p class="text-xs text-slate-400 mt-1">Gunakan deskripsi selengkap mungkin pada kolom alasan.</p>
-                    </div>
+                    <label for="evidence" class="block text-sm font-bold text-slate-700 mb-2">Lampiran Bukti (Opsional, bisa lebih dari 1 file)</label>
+                    <input type="file" name="evidence[]" id="evidence" accept=".jpg,.jpeg,.png,.pdf" multiple class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer border border-slate-200 rounded-xl bg-slate-50">
+                    <p class="text-xs text-slate-400 mt-2">Maks. 2MB per file. Format: JPG, PNG, PDF.</p>
+                    <?php if(session('errors.evidence')): ?>
+                        <p class="text-xs text-red-500 mt-2 font-medium"><?= session('errors.evidence') ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-6 border-t border-slate-100">

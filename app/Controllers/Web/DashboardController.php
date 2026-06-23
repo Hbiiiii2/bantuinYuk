@@ -77,6 +77,16 @@ class DashboardController extends BaseController
         $user = $userModel->find($userId);
         $rating = $user->rating ?? 0;
 
+        $helperProfileModel = new \App\Models\HelperProfileModel();
+        $helperProfile = $helperProfileModel->where('user_id', $userId)->first();
+        if (!$helperProfile) {
+            $helperProfileModel->insert([
+                'user_id' => $userId,
+                'verification_status' => 'pending'
+            ]);
+            $helperProfile = $helperProfileModel->where('user_id', $userId)->first();
+        }
+
         return view('dashboard/helper', [
             'title'          => 'Dashboard Helper - Bantuin Yuk',
             'tasks'          => $tasks,
@@ -85,7 +95,8 @@ class DashboardController extends BaseController
             'completedTasks' => $completedTasks,
             'rating'         => $rating,
             'wallet'         => $wallet,
-            'openTasks'      => $openTasks
+            'openTasks'      => $openTasks,
+            'helperProfile'  => $helperProfile
         ]);
     }
 }

@@ -81,7 +81,7 @@
                                 <form action="<?= base_url('/helper/tasks/' . $task['id'] . '/upload-progress') ?>" method="post" enctype="multipart/form-data" class="flex flex-col gap-3">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="type" value="start">
-                                    <input type="file" name="photo" accept="image/*" class="text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                                    <input type="file" name="photo" accept=".jpg,.jpeg,.png,.pdf" class="text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
                                     <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors w-full">Upload Foto Mulai</button>
                                 </form>
                             <?php else: ?>
@@ -110,7 +110,7 @@
                                     <form action="<?= base_url('/helper/tasks/' . $task['id'] . '/upload-progress') ?>" method="post" enctype="multipart/form-data" class="flex flex-col gap-3">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="type" value="end">
-                                        <input type="file" name="photo" accept="image/*" class="text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                                        <input type="file" name="photo" accept=".jpg,.jpeg,.png,.pdf" class="text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
                                         <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors w-full">Upload Hasil Akhir</button>
                                     </form>
                                 <?php else: ?>
@@ -126,6 +126,13 @@
                                 <p class="text-[10px] text-center text-emerald-600 font-bold bg-emerald-50 py-1 rounded-lg">Berhasil diunggah</p>
                             <?php endif; ?>
                         </div>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-slate-100">
+                        <p class="text-sm text-slate-500 mb-4">Ada masalah dari pihak User? Ajukan komplain untuk mediasi admin.</p>
+                        <a href="<?= base_url('/disputes/create/' . $task['id']) ?>" class="inline-flex items-center justify-center px-6 py-3 text-sm font-bold text-red-600 transition-all duration-300 bg-red-50 rounded-xl hover:bg-red-100 border border-red-100 w-full sm:w-auto">
+                            <i class="ph-bold ph-warning-octagon mr-2"></i> Laporkan Masalah
+                        </a>
                     </div>
                 </div>
             <?php endif; ?>

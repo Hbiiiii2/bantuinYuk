@@ -129,19 +129,94 @@ class AdminController extends BaseController
         ]);
     }
 
+    public function disputeDetail($id)
+    {
+        $disputeModel = new \App\Models\DisputeModel();
+        $taskModel = new \App\Models\TaskModel();
+
+        // Get single dispute using the existing method query logic by creating a custom one or just simple fetch
+        $builder = $disputeModel->builder();
+        $builder->select('disputes.*, tasks.title as task_title, users.name as creator_name, helpers.name as helper_name');
+        $builder->join('tasks', 'tasks.id = disputes.task_id', 'left');
+        $builder->join('users', 'users.id = disputes.user_id', 'left');
+        $builder->join('users as helpers', 'helpers.id = disputes.helper_id', 'left');
+        $builder->where('disputes.id', $id);
+        
+        $dispute = $builder->get()->getRowArray();
+
+        if (!$dispute) {
+            return redirect()->back()->with('error', 'Komplain tidak ditemukan.');
+        }
+
+        $task = $taskModel->find($dispute['task_id']);
+
+        $helperProfileModel = new \App\Models\HelperProfileModel();
+        $helperProfile = null;
+        if ($dispute['helper_id']) {
+            $helperProfile = $helperProfileModel->where('user_id', $dispute['helper_id'])->first();
+        }
+
+        // Fetch user info for phone numbers if not in profile
+        $userModel = new \App\Models\UserModel();
+        $helperUser = $dispute['helper_id'] ? $userModel->find($dispute['helper_id']) : null;
+
+        return view('admin/dispute_detail', [
+            'title'   => 'Detail Komplain - Bantuin Yuk',
+            'dispute' => $dispute,
+            'task'    => $task,
+            'helperProfile' => $helperProfile,
+            'helperUser' => $helperUser
+        ]);
+    }
+
     public function resolveDispute($id)
     {
         $disputeModel = new \App\Models\DisputeModel();
+        $taskModel = new \App\Models\TaskModel();
+        $walletModel = new \App\Models\WalletModel();
+
+        $dispute = $disputeModel->find($id);
+        if (!$dispute) {
+            return redirect()->back()->with('error', 'Komplain tidak ditemukan.');
+        }
+
+        $task = $taskModel->find($dispute['task_id']);
         $adminNote = $this->request->getPost('admin_note');
+        $fundAction = $this->request->getPost('fund_action'); // 'refund' or 'release'
         
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        if ($fundAction === 'refund') {
+            // Refund: uang kembali ke user, pekerjaan dianggap batal.
+            $walletModel->releaseHeldBalance($dispute['user_id'], $task['price']);
+            $taskModel->update($task['id'], ['status' => 'cancelled']);
+        } elseif ($fundAction === 'release') {
+            // Release: uang dicairkan ke helper, pekerjaan dianggap selesai.
+            $walletModel->confirmHeldBalance($task['user_id'], $task['helper_id'], $task['price'], $task['id']);
+            $taskModel->update($task['id'], ['status' => 'completed']);
+        }
+
+        // Suspend Helper jika dicentang
+        if ($suspendHelper == '1' && $dispute['helper_id']) {
+            $userModel = new \App\Models\UserModel();
+            $userModel->update($dispute['helper_id'], ['active' => 0]);
+        }
+
         $disputeModel->update($id, [
-            'status'      => \App\Models\DisputeModel::STATUS_RESOLVED,
-            'admin_note'  => $adminNote,
+            'status' => 'resolved',
+            'admin_note' => $adminNote,
             'resolved_by' => auth()->id(),
             'resolved_at' => date('Y-m-d H:i:s')
         ]);
 
-        return redirect()->back()->with('message', 'Komplain berhasil diselesaikan.');
+        $db->transComplete();
+
+        if ($db->transStatus() === false) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memproses resolusi.');
+        }
+
+        return redirect()->to('/admin/disputes')->with('message', 'Komplain berhasil diselesaikan dan dana telah diproses.');
     }
 
     public function rejectDispute($id)

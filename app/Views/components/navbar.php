@@ -47,7 +47,8 @@
                     
                     <div x-data="{ open: false }" class="relative" @keydown.escape.prevent.stop="open = false" @click.away="open = false">
                         <button @click="open = !open" class="flex items-center gap-2.5 focus:outline-none group">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=<?= esc($user->name) ?>&backgroundColor=e2e8f0" alt="Avatar" class="w-9 h-9 rounded-full ring-2 ring-transparent group-hover:ring-primary-500 transition-all duration-300">
+                            <?php $avatarUrl = $user->photo ? base_url('uploads/profiles/' . $user->photo) : "https://api.dicebear.com/7.x/avataaars/svg?seed=" . urlencode($user->name) . "&backgroundColor=e2e8f0"; ?>
+                            <img src="<?= esc($avatarUrl) ?>" alt="Avatar" class="w-9 h-9 rounded-full ring-2 ring-transparent group-hover:ring-primary-500 transition-all duration-300 object-cover">
                             <div class="text-left hidden lg:block">
                                 <p class="text-xs font-medium text-slate-500 leading-tight">Halo,</p>
                                 <p class="text-sm font-bold text-slate-800 leading-tight group-hover:text-primary-600 transition-colors"><?= esc(strtok($user->name, " ")) ?></p>
@@ -119,7 +120,8 @@
         <div class="px-4 pt-2 pb-6 space-y-1 bg-white/50">
             <?php if (auth('session')->loggedIn()): ?>
                 <div class="flex items-center gap-3 px-3 py-4 border-b border-slate-200/50 mb-2">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=<?= esc(auth('session')->user()->name) ?>&backgroundColor=e2e8f0" alt="Avatar" class="w-10 h-10 rounded-full">
+                    <?php $avatarUrlMobile = auth('session')->user()->photo ? base_url('uploads/profiles/' . auth('session')->user()->photo) : "https://api.dicebear.com/7.x/avataaars/svg?seed=" . urlencode(auth('session')->user()->name) . "&backgroundColor=e2e8f0"; ?>
+                    <img src="<?= esc($avatarUrlMobile) ?>" alt="Avatar" class="w-10 h-10 rounded-full object-cover">
                     <div>
                         <p class="text-sm font-bold text-slate-900"><?= esc(auth('session')->user()->name) ?></p>
                         <p class="text-xs font-medium text-slate-500"><?= esc(auth('session')->user()->email) ?></p>

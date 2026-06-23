@@ -43,10 +43,13 @@ class UserTaskController extends BaseController
     public function create()
     {
         $categories = $this->categoryModel->findAll();
+        $userId = auth()->id();
+        $wallet = $this->walletModel->where('user_id', $userId)->first();
 
         return view('tasks/user/create', [
             'title'      => 'Buat Task Baru - Bantuin Yuk',
-            'categories' => $categories
+            'categories' => $categories,
+            'wallet'     => $wallet
         ]);
     }
 
@@ -130,6 +133,45 @@ class UserTaskController extends BaseController
         // We will just allow marking it complete for now.
         
         return redirect()->back()->with('message', 'Helper diterima.');
+    }
+
+    public function cancelTask($id)
+    {
+        $userId = auth()->id();
+        $task = $this->taskModel->find($id);
+
+        if (!$task || $task['user_id'] != $userId) {
+            return redirect()->back()->with('error', 'Pekerjaan tidak ditemukan.');
+        }
+
+        if ($task['status'] !== 'open') {
+            return redirect()->back()->with('error', 'Hanya pekerjaan dengan status Open yang dapat dibatalkan.');
+        }
+
+        $cancelReason = $this->request->getPost('cancel_reason');
+        if (empty(trim($cancelReason))) {
+            return redirect()->back()->with('error', 'Alasan pembatalan harus diisi.');
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        // Kembalikan saldo yang ditahan
+        $this->walletModel->releaseHeldBalance($userId, $task['price']);
+
+        // Ubah status dan simpan alasan
+        $this->taskModel->update($id, [
+            'status' => 'cancelled',
+            'cancel_reason' => $cancelReason
+        ]);
+
+        $db->transComplete();
+
+        if ($db->transStatus() === false) {
+            return redirect()->back()->with('error', 'Gagal membatalkan pekerjaan. Silakan coba lagi.');
+        }
+
+        return redirect()->back()->with('message', 'Pekerjaan berhasil dibatalkan dan saldo telah dikembalikan.');
     }
 
     public function complete($taskId)

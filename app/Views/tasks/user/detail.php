@@ -125,27 +125,64 @@
                 </div>
             <?php endif; ?>
             
-            <?php if ($task['status'] === 'in_progress'): ?>
+            <?php if (in_array($task['status'], ['open', 'in_progress'])): ?>
                 <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
                     <h3 class="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-4">Aksi</h3>
                     
-                    <?php if (!empty($task['photo_start']) && !empty($task['photo_end'])): ?>
-                        <p class="text-sm text-slate-500 mb-4">Jika Anda merasa puas dengan hasil pekerjaan yang difoto, silakan selesaikan task ini.</p>
-                        <form action="<?= base_url('/user/tasks/' . $task['id'] . '/complete') ?>" method="post">
-                            <?= csrf_field() ?>
-                            <button type="submit" class="inline-flex items-center justify-center px-6 py-3 text-sm font-bold text-white transition-all duration-300 bg-green-600 rounded-xl hover:bg-green-700 hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
-                                <i class="ph-bold ph-check-circle mr-2"></i> Selesaikan Pekerjaan
+                    <?php if ($task['status'] === 'open'): ?>
+                        <div x-data="{ cancelModalOpen: false }">
+                            <p class="text-sm text-slate-500 mb-4">Pekerjaan ini belum diambil oleh Helper. Anda dapat membatalkannya sekarang, dan saldo Anda akan dikembalikan sepenuhnya.</p>
+                            <button @click="cancelModalOpen = true" class="inline-flex items-center justify-center px-6 py-3 text-sm font-bold text-red-600 transition-all duration-300 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 w-full sm:w-auto">
+                                <i class="ph-bold ph-x-circle mr-2"></i> Batalkan Pekerjaan
                             </button>
-                        </form>
-                    <?php else: ?>
-                        <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                            <div class="flex items-start gap-3">
-                                <i class="ph-fill ph-lock-key text-amber-500 text-xl shrink-0 mt-0.5"></i>
-                                <div>
-                                    <p class="text-sm font-bold text-amber-800 mb-1">Penyelesaian Terkunci</p>
-                                    <p class="text-xs text-amber-700">Tombol penyelesaian pekerjaan akan aktif setelah Helper mengunggah <b>Foto Mulai Kerja</b> dan <b>Foto Hasil Akhir</b>.</p>
+
+                            <!-- Cancel Modal -->
+                            <div x-show="cancelModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 text-left" x-cloak>
+                                <div @click.away="cancelModalOpen = false" class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
+                                    <h3 class="text-lg font-bold text-slate-900 mb-2">Konfirmasi Pembatalan</h3>
+                                    <p class="text-sm text-slate-500 mb-6">Tolong beritahu kami alasan pembatalan ini untuk masukan perbaikan aplikasi.</p>
+                                    
+                                    <form method="post" action="<?= base_url('/user/tasks/' . $task['id'] . '/cancel') ?>" class="mb-2">
+                                        <?= csrf_field() ?>
+                                        <textarea name="cancel_reason" rows="3" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 mb-4" placeholder="Mengapa Anda membatalkan pekerjaan ini?" required></textarea>
+                                        <div class="flex gap-2">
+                                            <button type="button" @click="cancelModalOpen = false" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl text-sm transition-colors">
+                                                Kembali
+                                            </button>
+                                            <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl text-sm transition-colors">
+                                                Batalkan Task
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
+                        </div>
+                    <?php elseif ($task['status'] === 'in_progress'): ?>
+                        <?php if (!empty($task['photo_start']) && !empty($task['photo_end'])): ?>
+                            <p class="text-sm text-slate-500 mb-4">Jika Anda merasa puas dengan hasil pekerjaan yang difoto, silakan selesaikan task ini.</p>
+                            <form action="<?= base_url('/user/tasks/' . $task['id'] . '/complete') ?>" method="post">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="inline-flex items-center justify-center px-6 py-3 text-sm font-bold text-white transition-all duration-300 bg-green-600 rounded-xl hover:bg-green-700 hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
+                                    <i class="ph-bold ph-check-circle mr-2"></i> Selesaikan Pekerjaan
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                                <div class="flex items-start gap-3">
+                                    <i class="ph-fill ph-lock-key text-amber-500 text-xl shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <p class="text-sm font-bold text-amber-800 mb-1">Penyelesaian Terkunci</p>
+                                        <p class="text-xs text-amber-700">Tombol penyelesaian pekerjaan akan aktif setelah Helper mengunggah <b>Foto Mulai Kerja</b> dan <b>Foto Hasil Akhir</b>.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="mt-6 pt-6 border-t border-slate-100">
+                            <p class="text-sm text-slate-500 mb-4">Punya masalah dengan pekerjaan ini? Ajukan komplain untuk mediasi admin.</p>
+                            <a href="<?= base_url('/disputes/create/' . $task['id']) ?>" class="inline-flex items-center justify-center px-6 py-3 text-sm font-bold text-red-600 transition-all duration-300 bg-red-50 rounded-xl hover:bg-red-100 border border-red-100 w-full sm:w-auto">
+                                <i class="ph-bold ph-warning-octagon mr-2"></i> Laporkan Masalah
+                            </a>
                         </div>
                     <?php endif; ?>
                 </div>

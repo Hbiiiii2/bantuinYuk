@@ -59,6 +59,36 @@
                         <div class="bg-slate-50 rounded-xl p-5 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed border border-slate-100"><?= esc($dispute['reason']) ?></div>
                     </div>
 
+                    <?php 
+                        $evidences = [];
+                        if ($dispute['evidence_file']) {
+                            $decoded = json_decode($dispute['evidence_file'], true);
+                            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                $evidences = $decoded;
+                            } else {
+                                $evidences = [$dispute['evidence_file']];
+                            }
+                        }
+                    ?>
+                    <?php if (!empty($evidences)): ?>
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-2">Lampiran Bukti</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <?php foreach ($evidences as $evidence): ?>
+                                <?php if (preg_match('/\.(jpg|jpeg|png)$/i', $evidence)): ?>
+                                    <a href="<?= base_url($evidence) ?>" target="_blank" class="block rounded-xl overflow-hidden border border-slate-200 aspect-video">
+                                        <img src="<?= base_url($evidence) ?>" alt="Bukti Komplain" class="w-full h-full object-cover hover:opacity-90 transition-opacity">
+                                    </a>
+                                <?php else: ?>
+                                    <a href="<?= base_url($evidence) ?>" target="_blank" class="flex items-center px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-100 transition-colors w-full h-full">
+                                        <i class="ph-bold ph-file-pdf text-red-500 text-xl mr-2"></i> Buka Dokumen Bukti
+                                    </a>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <?php if ($dispute['admin_note']): ?>
                         <div class="border-t border-slate-100 pt-6">
                             <div class="flex items-center gap-2 mb-3">

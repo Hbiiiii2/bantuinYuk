@@ -26,12 +26,17 @@ $routes->group('', ['filter' => 'session'], function ($routes) {
     $routes->get('profile/edit', '\App\Controllers\Web\ProfileController::edit');
     $routes->post('profile/update', '\App\Controllers\Web\ProfileController::update');
     
+    // Web Helper Tasks
+    $routes->get('helper/kyc', '\App\Controllers\Web\HelperKycController::index');
+    $routes->post('helper/kyc/submit', '\App\Controllers\Web\HelperKycController::submit');
+    
     // Web User Tasks
     $routes->get('user/tasks', '\App\Controllers\Web\UserTaskController::index');
     $routes->get('user/tasks/create', '\App\Controllers\Web\UserTaskController::create');
     $routes->post('user/tasks/store', '\App\Controllers\Web\UserTaskController::store');
     $routes->get('user/tasks/(:num)', '\App\Controllers\Web\UserTaskController::detail/$1');
     $routes->post('user/tasks/(:num)/complete', '\App\Controllers\Web\UserTaskController::complete/$1');
+    $routes->post('user/tasks/(:num)/cancel', '\App\Controllers\Web\UserTaskController::cancelTask/$1');
     $routes->post('user/tasks/(:num)/rate', '\App\Controllers\Web\UserTaskController::rateHelper/$1');
     
     // Web Helper Tasks
@@ -52,6 +57,7 @@ $routes->group('', ['filter' => 'session'], function ($routes) {
     $routes->get('admin/helpers', '\App\Controllers\Web\AdminController::helpers');
     $routes->get('admin/tasks', '\App\Controllers\Web\AdminController::tasks');
     $routes->get('admin/disputes', '\App\Controllers\Web\AdminController::disputes');
+    $routes->get('admin/disputes/(:num)', '\App\Controllers\Web\AdminController::disputeDetail/$1');
     $routes->post('admin/disputes/(:num)/resolve', '\App\Controllers\Web\AdminController::resolveDispute/$1');
     $routes->post('admin/disputes/(:num)/reject', '\App\Controllers\Web\AdminController::rejectDispute/$1');
     $routes->post('admin/toggle-user/(:num)', '\App\Controllers\Web\AdminController::toggleUserStatus/$1');
@@ -59,7 +65,9 @@ $routes->group('', ['filter' => 'session'], function ($routes) {
     // Web Notifications
     $routes->get('notifications', '\App\Controllers\Web\NotificationController::index');
     $routes->post('notifications/(:num)/read', '\App\Controllers\Web\NotificationController::markAsRead/$1');
+    $routes->get('notifications/(:num)/read-and-redirect', '\App\Controllers\Web\NotificationController::readAndRedirect/$1');
     $routes->post('notifications/mark-all-read', '\App\Controllers\Web\NotificationController::markAllAsRead');
+    $routes->post('notifications/delete-read', '\App\Controllers\Web\NotificationController::deleteRead');
 
     // Web Pusat Resolusi (Disputes)
     $routes->get('disputes', '\App\Controllers\Web\DisputeController::index');

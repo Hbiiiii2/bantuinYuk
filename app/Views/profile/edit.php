@@ -29,17 +29,27 @@
     <form action="<?= base_url('/profile/update') ?>" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
         <?= csrf_field() ?>
         
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8 pb-8 border-b border-slate-100">
+        <div x-data="{ 
+                imageUrl: '<?= !empty($user->photo) ? base_url('uploads/profiles/' . esc($user->photo)) : "https://api.dicebear.com/7.x/avataaars/svg?seed=" . esc($user->name) . "&backgroundColor=e2e8f0" ?>',
+                fileChosen(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    if (file.type.match('image.*')) {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = e => {
+                            this.imageUrl = e.target.result;
+                        };
+                    }
+                }
+             }" class="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8 pb-8 border-b border-slate-100">
             <div class="relative">
-                <?php if (!empty($user->photo)): ?>
-                    <img src="<?= base_url('uploads/profiles/' . esc($user->photo)) ?>" alt="Profile" class="w-24 h-24 rounded-full border-2 border-slate-100 object-cover">
-                <?php else: ?>
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=<?= esc($user->name) ?>&backgroundColor=e2e8f0" alt="Avatar" class="w-24 h-24 rounded-full border-2 border-slate-100">
-                <?php endif; ?>
+                <img :src="imageUrl" alt="Profile" class="w-24 h-24 rounded-full border-2 border-slate-100 object-cover bg-white">
                 <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-sm border border-slate-100">
                     <label class="w-8 h-8 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center cursor-pointer hover:bg-primary-100 transition-colors">
                         <i class="ph-bold ph-camera text-sm"></i>
-                        <input type="file" name="photo" class="hidden" accept="image/png, image/jpeg, image/jpg">
+                        <input type="file" name="photo" class="hidden" accept=".jpg,.jpeg,.png,.pdf" @change="fileChosen">
                     </label>
                 </div>
             </div>

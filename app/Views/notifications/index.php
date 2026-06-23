@@ -9,12 +9,20 @@
             <p class="mt-1 text-sm text-slate-500">Pemberitahuan terbaru tentang aktivitas akun dan pekerjaan Anda.</p>
         </div>
         <?php if (!empty($notifications)): ?>
-            <form action="<?= base_url('/notifications/mark-all-read') ?>" method="post">
-                <?= csrf_field() ?>
-                <button type="submit" class="inline-flex items-center justify-center px-4 py-2 text-sm font-bold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm">
-                    <i class="ph-bold ph-checks mr-2"></i> Tandai Semua Dibaca
-                </button>
-            </form>
+            <div class="flex items-center gap-2">
+                <form action="<?= base_url('/notifications/mark-all-read') ?>" method="post">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="inline-flex items-center justify-center px-4 py-2 text-sm font-bold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm">
+                        <i class="ph-bold ph-checks mr-2"></i> Tandai Semua Dibaca
+                    </button>
+                </form>
+                <form action="<?= base_url('/notifications/delete-read') ?>" method="post" onsubmit="return confirm('Yakin ingin menghapus semua notifikasi yang sudah dibaca?')">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="inline-flex items-center justify-center px-4 py-2 text-sm font-bold text-red-600 bg-white border border-red-200 rounded-xl hover:bg-red-50 transition-colors shadow-sm">
+                        <i class="ph-bold ph-trash mr-2"></i> Hapus Dibaca
+                    </button>
+                </form>
+            </div>
         <?php endif; ?>
     </div>
 
@@ -37,8 +45,8 @@
         <?php else: ?>
             <ul class="divide-y divide-slate-100">
                 <?php foreach ($notifications as $notification): ?>
-                    <li class="relative p-6 hover:bg-slate-50 transition-colors <?= $notification['is_read'] == 0 ? 'bg-primary-50/30' : '' ?>">
-                        <div class="flex items-start gap-4">
+                    <li class="relative hover:bg-slate-50 transition-colors <?= $notification['is_read'] == 0 ? 'bg-primary-50/30' : '' ?>">
+                        <a href="<?= base_url('/notifications/' . $notification['id'] . '/read-and-redirect') ?>" class="flex items-start gap-4 p-6 w-full text-left block">
                             <?php 
                                 $iconClass = match($notification['type']) {
                                     'task_created', 'task_accepted', 'task_started' => 'bg-blue-100 text-blue-600',
@@ -70,13 +78,9 @@
                             <?php if ($notification['is_read'] == 0): ?>
                                 <div class="shrink-0 flex flex-col items-end gap-2">
                                     <span class="w-3 h-3 bg-primary-500 rounded-full"></span>
-                                    <form action="<?= base_url('/notifications/' . $notification['id'] . '/read') ?>" method="post">
-                                        <?= csrf_field() ?>
-                                        <button type="submit" class="text-xs font-bold text-primary-600 hover:text-primary-700">Tandai Dibaca</button>
-                                    </form>
                                 </div>
                             <?php endif; ?>
-                        </div>
+                        </a>
                     </li>
                 <?php endforeach; ?>
             </ul>

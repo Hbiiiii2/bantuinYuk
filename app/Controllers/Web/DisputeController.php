@@ -71,18 +71,47 @@ class DisputeController extends BaseController
             'reason' => 'required|min_length[10]',
         ];
 
+        $evidenceFiles = $this->request->getFileMultiple('evidence');
+        $hasFiles = false;
+        if ($evidenceFiles) {
+            foreach ($evidenceFiles as $file) {
+                if ($file->isValid()) {
+                    $hasFiles = true;
+                    break;
+                }
+            }
+        }
+
+        if ($hasFiles) {
+            $rules['evidence'] = 'max_size[evidence,2048]|ext_in[evidence,png,jpg,jpeg,pdf]';
+        }
+
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        $evidencePaths = [];
+        if ($hasFiles) {
+            foreach ($evidenceFiles as $file) {
+                if ($file->isValid() && !$file->hasMoved()) {
+                    $newName = $file->getRandomName();
+                    $file->move('uploads/disputes', $newName);
+                    $evidencePaths[] = 'uploads/disputes/' . $newName;
+                }
+            }
+        }
+        
+        $evidencePathJson = !empty($evidencePaths) ? json_encode($evidencePaths) : null;
+
         $helperId = $task['helper_id'];
         
         $data = [
-            'task_id'   => $taskId,
-            'user_id'   => $userId, // User who created the dispute
-            'helper_id' => ($userId == $task['user_id']) ? $task['helper_id'] : $task['user_id'], // Counterparty
-            'reason'    => $this->request->getPost('reason'),
-            'status'    => DisputeModel::STATUS_OPEN
+            'task_id'       => $taskId,
+            'user_id'       => $userId, // User who created the dispute
+            'helper_id'     => ($userId == $task['user_id']) ? $task['helper_id'] : $task['user_id'], // Counterparty
+            'reason'        => $this->request->getPost('reason'),
+            'evidence_file' => $evidencePathJson,
+            'status'        => DisputeModel::STATUS_OPEN
         ];
 
         $this->disputeModel->insert($data);

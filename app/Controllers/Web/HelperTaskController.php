@@ -92,6 +92,15 @@ class HelperTaskController extends BaseController
     public function take($id)
     {
         $userId = auth()->id();
+
+        // Cek verifikasi KYC
+        $helperProfileModel = new \App\Models\HelperProfileModel();
+        $profile = $helperProfileModel->where('user_id', $userId)->first();
+        
+        if (!$profile || $profile['verification_status'] !== 'verified') {
+            return redirect()->to('/helper/kyc')->with('error', 'Anda harus melengkapi verifikasi identitas (KYC) terlebih dahulu sebelum dapat mengambil pekerjaan.');
+        }
+
         $task = $this->taskModel->find($id);
 
         if (!$task || $task['status'] !== 'open') {
@@ -128,7 +137,7 @@ class HelperTaskController extends BaseController
         $validationRule = [
             'photo' => [
                 'label' => 'Foto Progress',
-                'rules' => 'uploaded[photo]|is_image[photo]|mime_in[photo,image/jpg,image/jpeg,image/png,image/webp]|max_size[photo,5120]',
+                'rules' => 'uploaded[photo]|ext_in[photo,jpg,jpeg,png,pdf]|max_size[photo,5120]',
             ],
         ];
 

@@ -24,7 +24,7 @@ class DisputeModel extends Model
     ];
 
     const STATUS_OPEN         = 'open';
-    const STATUS_UNDER_REVIEW = 'under_review';
+    const STATUS_UNDER_REVIEW = 'investigating';
     const STATUS_RESOLVED     = 'resolved';
     const STATUS_REJECTED     = 'rejected';
 

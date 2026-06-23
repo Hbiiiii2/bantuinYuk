@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>
-<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+<div x-data="{ showKycModal: <?= (isset($helperProfile) && $helperProfile['verification_status'] === 'pending' && !session()->has('error')) ? 'true' : (session()->has('error') ? 'true' : 'false') ?> }" class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
     
     <!-- Welcome Header -->
     <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -206,6 +206,167 @@
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
+    </div>
+</div>
+
+    <!-- KYC Modal Popup -->
+    <div x-show="showKycModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div x-show="showKycModal" 
+                 x-transition:enter="ease-out duration-300" 
+                 x-transition:enter-start="opacity-0" 
+                 x-transition:enter-end="opacity-100" 
+                 x-transition:leave="ease-in duration-200" 
+                 x-transition:leave-start="opacity-100" 
+                 x-transition:leave-end="opacity-0" 
+                 class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" aria-hidden="true" @click="showKycModal = false"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <!-- Modal panel -->
+            <div x-show="showKycModal" 
+                 x-transition:enter="ease-out duration-300" 
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                 x-transition:leave="ease-in duration-200" 
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                 class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-100">
+                
+                <div class="absolute top-0 right-0 pt-4 pr-4 z-10">
+                    <button @click="showKycModal = false" type="button" class="bg-white rounded-xl p-2 text-slate-400 hover:text-slate-500 hover:bg-slate-100 focus:outline-none transition-colors">
+                        <span class="sr-only">Tutup</span>
+                        <i class="ph-bold ph-x text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="px-6 py-8 sm:p-10">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary-100">
+                            <i class="ph-fill ph-identification-card text-3xl text-primary-600"></i>
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-slate-900 font-display" id="modal-title">Verifikasi Identitas Anda</h3>
+                        <p class="text-slate-500 mt-2 text-sm">Untuk dapat mengambil pekerjaan, Anda diwajibkan untuk memverifikasi identitas terlebih dahulu.</p>
+                    </div>
+
+                    <?php if (session()->has('error')): ?>
+                        <div class="bg-red-50/80 backdrop-blur-sm border border-red-100 p-4 mb-6 rounded-2xl flex items-start gap-3">
+                            <i class="ph-fill ph-warning-circle text-red-500 text-xl mt-0.5"></i>
+                            <p class="text-sm font-bold text-red-800"><?= session('error') ?></p>
+                        </div>
+                    <?php endif; ?>
+
+                    <form action="<?= base_url('helper/kyc/submit') ?>" method="post" enctype="multipart/form-data" class="space-y-6">
+                        <?= csrf_field() ?>
+
+                        <!-- KTP Name -->
+                        <div>
+                            <label for="ktp_name" class="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap (Sesuai KTP) <span class="text-red-500">*</span></label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i class="ph-bold ph-user text-slate-400 group-focus-within:text-primary-500 transition-colors"></i>
+                                </div>
+                                <input type="text" name="ktp_name" id="ktp_name" value="<?= old('ktp_name') ?>" required class="block w-full pl-11 pr-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-transparent hover:bg-slate-100/80">
+                            </div>
+                        </div>
+
+                        <!-- KTP Number -->
+                        <div>
+                            <label for="ktp_number" class="block text-sm font-bold text-slate-700 mb-2">Nomor Induk Kependudukan (NIK) <span class="text-red-500">*</span></label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i class="ph-bold ph-identification-card text-slate-400 group-focus-within:text-primary-500 transition-colors"></i>
+                                </div>
+                                <input type="number" name="ktp_number" id="ktp_number" value="<?= old('ktp_number') ?>" required class="block w-full pl-11 pr-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-transparent hover:bg-slate-100/80" placeholder="16 Digit NIK KTP Anda">
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div>
+                            <label for="address" class="block text-sm font-bold text-slate-700 mb-2">Alamat Tinggal Lengkap <span class="text-red-500">*</span></label>
+                            <div class="relative group">
+                                <div class="absolute top-3 left-0 pl-4 pointer-events-none">
+                                    <i class="ph-bold ph-map-pin text-slate-400 group-focus-within:text-primary-500 transition-colors"></i>
+                                </div>
+                                <textarea name="address" id="address" rows="3" required class="block w-full pl-11 pr-4 py-3 bg-slate-50 border-slate-200 rounded-xl text-sm transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-transparent hover:bg-slate-100/80" placeholder="Jalan, RT/RW, Kelurahan, Kecamatan..."><?= old('address') ?></textarea>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{ ktpPreview: null, selfiePreview: null }">
+                            <!-- KTP Photo -->
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Foto KTP Fisik <span class="text-red-500">*</span></label>
+                                <label for="modal_ktp_photo" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-2xl hover:border-primary-400 transition-colors bg-slate-50 relative overflow-hidden group cursor-pointer h-48">
+                                    
+                                    <input id="modal_ktp_photo" name="ktp_photo" type="file" class="sr-only" accept=".jpg,.jpeg,.png" required @change="ktpPreview = URL.createObjectURL($event.target.files[0])">
+
+                                    <!-- IF NO PREVIEW -->
+                                    <div x-show="!ktpPreview" class="space-y-2 text-center flex flex-col items-center justify-center w-full h-full">
+                                        <i class="ph-bold ph-camera text-3xl text-slate-400 group-hover:text-primary-500 transition-colors"></i>
+                                        <div class="flex text-sm text-slate-600 justify-center">
+                                            <span class="bg-white rounded-md font-bold text-primary-600 px-3 py-1 shadow-sm border border-slate-100 pointer-events-none group-hover:bg-primary-50 transition-colors">Pilih File</span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-2">JPG, PNG up to 2MB</p>
+                                    </div>
+
+                                    <!-- IF PREVIEW -->
+                                    <template x-if="ktpPreview">
+                                        <div class="absolute inset-0 w-full h-full">
+                                            <img :src="ktpPreview" class="w-full h-full object-cover">
+                                            <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                                                <span class="bg-white/20 text-white border border-white/50 px-4 py-2 rounded-xl font-bold backdrop-blur-md flex items-center gap-2 pointer-events-none">
+                                                    <i class="ph-bold ph-arrows-clockwise"></i> Ganti File
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </label>
+                            </div>
+
+                            <!-- Selfie Photo -->
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Selfie Memegang KTP <span class="text-red-500">*</span></label>
+                                <label for="modal_selfie_photo" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-2xl hover:border-primary-400 transition-colors bg-slate-50 relative overflow-hidden group cursor-pointer h-48">
+                                    
+                                    <input id="modal_selfie_photo" name="selfie_photo" type="file" class="sr-only" accept=".jpg,.jpeg,.png" required @change="selfiePreview = URL.createObjectURL($event.target.files[0])">
+
+                                    <!-- IF NO PREVIEW -->
+                                    <div x-show="!selfiePreview" class="space-y-2 text-center flex flex-col items-center justify-center w-full h-full">
+                                        <i class="ph-bold ph-user-focus text-3xl text-slate-400 group-hover:text-primary-500 transition-colors"></i>
+                                        <div class="flex text-sm text-slate-600 justify-center">
+                                            <span class="bg-white rounded-md font-bold text-primary-600 px-3 py-1 shadow-sm border border-slate-100 pointer-events-none group-hover:bg-primary-50 transition-colors">Pilih File</span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-2">JPG, PNG up to 2MB</p>
+                                    </div>
+
+                                    <!-- IF PREVIEW -->
+                                    <template x-if="selfiePreview">
+                                        <div class="absolute inset-0 w-full h-full">
+                                            <img :src="selfiePreview" class="w-full h-full object-cover">
+                                            <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                                                <span class="bg-white/20 text-white border border-white/50 px-4 py-2 rounded-xl font-bold backdrop-blur-md flex items-center gap-2 pointer-events-none">
+                                                    <i class="ph-bold ph-arrows-clockwise"></i> Ganti File
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100 flex gap-3">
+                            <button @click="showKycModal = false" type="button" class="w-1/3 inline-flex items-center justify-center px-6 py-3.5 text-sm font-bold text-slate-700 transition-all duration-300 bg-slate-100 rounded-xl hover:bg-slate-200">
+                                Nanti Saja
+                            </button>
+                            <button type="submit" class="w-2/3 inline-flex items-center justify-center px-6 py-3.5 text-sm font-bold text-white transition-all duration-300 bg-primary-600 rounded-xl hover:bg-primary-700 focus:ring-4 focus:ring-primary-200">
+                                Kirim Verifikasi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <?= $this->endSection() ?>
