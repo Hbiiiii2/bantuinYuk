@@ -102,7 +102,7 @@ class WalletModel extends Model
     {
         $builder = $this->builder();
         $builder->where('user_id', $userId);
-        $builder->where('balance - pending_balance >=', $amount);
+        $builder->where("(balance - pending_balance) >= {$amount}");
         $builder->set('pending_balance', "pending_balance + {$amount}", false);
         
         return $builder->update() !== false;
@@ -116,7 +116,7 @@ class WalletModel extends Model
     {
         $builder = $this->builder();
         $builder->where('user_id', $userId);
-        $builder->where('pending_balance >=', $amount);
+        $builder->where("pending_balance >= {$amount}");
         $builder->set('pending_balance', "pending_balance - {$amount}", false);
         
         return $builder->update() !== false;
@@ -130,7 +130,7 @@ class WalletModel extends Model
     {
         $builder = $this->builder();
         $builder->where('user_id', $userId);
-        $builder->where('pending_balance >=', $amount);
+        $builder->where("pending_balance >= {$amount}");
         $builder->set('pending_balance', "pending_balance - {$amount}", false);
         $builder->set('balance', "balance - {$amount}", false);
         

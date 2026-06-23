@@ -109,8 +109,10 @@ class HelperService extends BaseService
 
         $user = $this->userModel->find($userId);
         if ($user) {
-            unset($user['password']);
-            $profile['user'] = $user;
+            $userData = $user->toArray();
+            unset($userData['password']);
+            unset($userData['password_hash']);
+            $profile['user'] = $userData;
         }
 
         $location = $this->locationModel->getLocationByHelper($userId);

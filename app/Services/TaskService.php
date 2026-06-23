@@ -460,36 +460,7 @@ class TaskService extends BaseService
         return $result;
     }
 
-            if ($task['user_id'] == $helperId) {
-                throw BusinessException::conflict('You cannot accept your own task');
-            }
 
-            $helper = $this->userModel->find($helperId);
-            if (!$helper || $helper['role'] !== 'helper') {
-                throw BusinessException::forbidden('Only helpers can accept tasks');
-            }
-
-            // Atomic update - only update if still OPEN
-            $builder = $this->taskModel->builder();
-            $builder->where('id', $taskId);
-            $builder->where('status', TaskModel::STATUS_OPEN);
-            $updated = $builder->update([
-                'helper_id' => $helperId,
-                'status'    => TaskModel::STATUS_ACCEPTED,
-            ]);
-
-            if ($builder->affectedRows() === 0) {
-                throw BusinessException::conflict('Task was just accepted by another helper');
-            }
-
-            // Create status history
-            $this->createStatusHistory($taskId, TaskModel::STATUS_ACCEPTED, $helperId, 'Task accepted by helper');
-
-            return $this->getTaskById($taskId);
-        });
-
-        return $result;
-    }
 
     /**
      * Mulai pengerjaan task (dengan transaction).

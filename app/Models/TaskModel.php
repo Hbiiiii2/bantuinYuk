@@ -21,7 +21,9 @@ class TaskModel extends Model
         'location',
         'deadline_start',
         'deadline_end',
-        'status'
+        'status',
+        'photo_start',
+        'photo_end'
     ];
 
     protected $useSoftDeletes = false;

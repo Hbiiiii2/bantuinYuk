@@ -15,10 +15,7 @@ class UserModel extends ShieldUserModel
     protected $protectFields    = false;
     protected $allowedFields    = [
         'name',
-        'username',
-        'email',
         'phone',
-        'password',
         'role',
         'photo',
         'rating',

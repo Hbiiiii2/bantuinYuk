@@ -53,11 +53,13 @@ class WalletService extends BaseService
         $totalWithdrawn = $this->getTotalByType($userId, TransactionModel::TYPE_WITHDRAW);
         $totalRefunded  = $this->getTotalByType($userId, TransactionModel::TYPE_REFUND);
 
-        $pendingWithdrawals = $this->transactionModel->builder()
+        $pendingRow = $this->transactionModel->builder()
+            ->selectSum('amount')
             ->where('user_id', $userId)
             ->where('type', TransactionModel::TYPE_WITHDRAW)
             ->where('status', TransactionModel::STATUS_PENDING)
-            ->sum('amount') ?? 0;
+            ->get()->getRow();
+        $pendingWithdrawals = $pendingRow ? $pendingRow->amount : 0;
 
         return [
             'balance'             => (float) $wallet['balance'],

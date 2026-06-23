@@ -63,50 +63,50 @@ class ReviewService extends BaseService
         }
 
         // Validate ownership
-        if ($task['user_id'] != $userId) {
-            throw BusinessException::forbidden('You can only review your own tasks');
+        if ($userId != $task['user_id'] && $userId != $task['helper_id']) {
+            throw BusinessException::forbidden('You can only review tasks you are part of');
         }
+
+        $reviewerId = $userId;
+        $revieweeId = ($userId == $task['user_id']) ? $task['helper_id'] : $task['user_id'];
 
         // Validate no duplicate review
-        if ($this->reviewModel->hasReview($taskId)) {
-            throw BusinessException::conflict('This task already has a review');
+        if ($this->reviewModel->hasReview($taskId, $reviewerId)) {
+            throw BusinessException::conflict('You have already reviewed this task');
         }
 
-        // Validate helper exists
-        if (!$task['helper_id']) {
-            throw BusinessException::conflict('Task has no assigned helper');
-        }
-
-        $result = $this->transaction(function () use ($taskId, $userId, $task, $rating, $data) {
+        $result = $this->transaction(function () use ($taskId, $reviewerId, $revieweeId, $task, $rating, $data) {
             // Create review
             $reviewId = $this->reviewModel->insert([
-                'task_id'   => $taskId,
-                'user_id'   => $userId,
-                'helper_id' => $task['helper_id'],
-                'rating'    => $rating,
-                'review'    => $data['review'] ?? null,
+                'task_id'     => $taskId,
+                'reviewer_id' => $reviewerId,
+                'reviewee_id' => $revieweeId,
+                'rating'      => $rating,
+                'review'      => $data['review'] ?? null,
             ]);
 
             if (!$reviewId) {
                 throw BusinessException::failed('Failed to create review');
             }
 
-            // Update helper rating
-            $this->updateHelperRating($task['helper_id']);
+            // Update rating
+            $this->updateUserRating($revieweeId);
 
-            // Update completed_tasks count
-            $this->updateCompletedTasks($task['helper_id']);
+            // Update completed_tasks count if reviewee is helper
+            if ($revieweeId == $task['helper_id']) {
+                $this->updateCompletedTasks($revieweeId);
+            }
 
             $review = $this->getReviewById($reviewId);
 
-            // Send notification to helper
-            $user = $this->userModel->find($userId);
+            // Send notification
+            $reviewer = $this->userModel->find($reviewerId);
             $this->notificationService->notifyReviewReceived(
                 $taskId,
                 $task['title'],
-                $task['helper_id'],
-                $userId,
-                $user['name'] ?? 'User',
+                $revieweeId,
+                $reviewerId,
+                $reviewer['name'] ?? 'User',
                 $rating
             );
 
@@ -127,7 +127,7 @@ class ReviewService extends BaseService
     {
         $builder = $this->reviewModel->builder();
         $builder->select('task_reviews.*, users.name as user_name, tasks.title as task_title');
-        $builder->join('users', 'users.id = task_reviews.user_id', 'left');
+        $builder->join('users', 'users.id = task_reviews.reviewer_id', 'left');
         $builder->join('tasks', 'tasks.id = task_reviews.task_id', 'left');
         $builder->where('task_reviews.id', $reviewId);
         $review = $builder->get()->getRowArray();
@@ -149,7 +149,7 @@ class ReviewService extends BaseService
     {
         $builder = $this->reviewModel->builder();
         $builder->select('task_reviews.*, users.name as user_name');
-        $builder->join('users', 'users.id = task_reviews.user_id', 'left');
+        $builder->join('users', 'users.id = task_reviews.reviewer_id', 'left');
         $builder->where('task_reviews.task_id', $taskId);
         $review = $builder->get()->getRowArray();
 
@@ -168,9 +168,9 @@ class ReviewService extends BaseService
     {
         $builder = $this->reviewModel->builder();
         $builder->select('task_reviews.*, users.name as user_name, tasks.title as task_title');
-        $builder->join('users', 'users.id = task_reviews.user_id', 'left');
+        $builder->join('users', 'users.id = task_reviews.reviewer_id', 'left');
         $builder->join('tasks', 'tasks.id = task_reviews.task_id', 'left');
-        $builder->where('task_reviews.helper_id', $helperId);
+        $builder->where('task_reviews.reviewee_id', $helperId);
 
         $total = $builder->countAllResults(false);
 
@@ -199,12 +199,12 @@ class ReviewService extends BaseService
     {
         $builder = $this->reviewModel->builder();
         $builder->select('task_reviews.*, users.name as user_name, tasks.title as task_title, helpers.name as helper_name');
-        $builder->join('users', 'users.id = task_reviews.user_id', 'left');
+        $builder->join('users', 'users.id = task_reviews.reviewer_id', 'left');
         $builder->join('tasks', 'tasks.id = task_reviews.task_id', 'left');
-        $builder->join('users as helpers', 'helpers.id = task_reviews.helper_id', 'left');
+        $builder->join('users as helpers', 'helpers.id = task_reviews.reviewee_id', 'left');
 
         if (!empty($filters['helper_id'])) {
-            $builder->where('task_reviews.helper_id', $filters['helper_id']);
+            $builder->where('task_reviews.reviewee_id', $filters['helper_id']);
         }
 
         if (!empty($filters['rating'])) {
@@ -252,15 +252,15 @@ class ReviewService extends BaseService
     }
 
     /**
-     * Update helper rating di users table.
+     * Update user rating di users table.
      * 
-     * @param int $helperId
+     * @param int $userId
      */
-    private function updateHelperRating(int $helperId): void
+    private function updateUserRating(int $userId): void
     {
-        $averageRating = $this->reviewModel->getAverageRating($helperId);
+        $averageRating = $this->reviewModel->getAverageRating($userId);
 
-        $this->userModel->update($helperId, [
+        $this->userModel->update($userId, [
             'rating' => $averageRating,
         ]);
     }
@@ -297,7 +297,7 @@ class ReviewService extends BaseService
         $distribution = [];
         for ($i = TaskReviewModel::MIN_RATING; $i <= TaskReviewModel::MAX_RATING; $i++) {
             $count = $this->reviewModel
-                ->where('helper_id', $helperId)
+                ->where('reviewee_id', $helperId)
                 ->where('rating', $i)
                 ->countAllResults();
             $distribution[$i] = $count;

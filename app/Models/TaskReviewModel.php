@@ -13,8 +13,8 @@ class TaskReviewModel extends Model
 
     protected $allowedFields = [
         'task_id',
-        'user_id',
-        'helper_id',
+        'reviewer_id',
+        'reviewee_id',
         'rating',
         'review',
     ];
@@ -27,49 +27,53 @@ class TaskReviewModel extends Model
         return $this->belongsTo('TaskModel', 'task_id');
     }
 
-    public function getUser()
+    public function getReviewer()
     {
-        return $this->belongsTo('UserModel', 'user_id');
+        return $this->belongsTo('UserModel', 'reviewer_id');
     }
 
-    public function getHelper()
+    public function getReviewee()
     {
-        return $this->belongsTo('UserModel', 'helper_id');
-    }
-
-    /**
-     * Check if a task already has a review.
-     */
-    public function hasReview(int $taskId): bool
-    {
-        return $this->where('task_id', $taskId)->countAllResults() > 0;
+        return $this->belongsTo('UserModel', 'reviewee_id');
     }
 
     /**
-     * Get review by task_id.
+     * Check if a task already has a review by a specific reviewer.
      */
-    public function getByTaskId(int $taskId): ?array
+    public function hasReview(int $taskId, int $reviewerId): bool
     {
-        return $this->where('task_id', $taskId)->first();
+        return $this->where('task_id', $taskId)
+                    ->where('reviewer_id', $reviewerId)
+                    ->countAllResults() > 0;
     }
 
     /**
-     * Calculate average rating for a helper.
+     * Get review by task_id and reviewer_id.
      */
-    public function getAverageRating(int $helperId): float
+    public function getReview(int $taskId, int $reviewerId): ?array
+    {
+        return $this->where('task_id', $taskId)
+                    ->where('reviewer_id', $reviewerId)
+                    ->first();
+    }
+
+    /**
+     * Calculate average rating for a reviewee.
+     */
+    public function getAverageRating(int $revieweeId): float
     {
         $result = $this->selectAvg('rating')
-            ->where('helper_id', $helperId)
+            ->where('reviewee_id', $revieweeId)
             ->first();
 
         return round((float) ($result['rating'] ?? 0), 2);
     }
 
     /**
-     * Count total reviews for a helper.
+     * Count total reviews for a reviewee.
      */
-    public function countByHelper(int $helperId): int
+    public function countByReviewee(int $revieweeId): int
     {
-        return $this->where('helper_id', $helperId)->countAllResults();
+        return $this->where('reviewee_id', $revieweeId)->countAllResults();
     }
 }

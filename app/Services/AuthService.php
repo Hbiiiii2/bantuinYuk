@@ -127,6 +127,11 @@ class AuthService extends BaseService
         // Use session authenticator for email/password login
         $tokenAuth = auth('session');
 
+        // Prevent LogicException if already logged in
+        if ($tokenAuth->loggedIn()) {
+            $tokenAuth->logout();
+        }
+
         $result = $tokenAuth->attempt([
             'email'    => $data['email'],
             'password' => $data['password'],

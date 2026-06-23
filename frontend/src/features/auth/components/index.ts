@@ -1,5 +1,0 @@
-export { LoginPage } from './LoginPage'
-export { RegisterPage } from './RegisterPage'
-export { UserDashboardPage } from './UserDashboardPlaceholder'
-export { HelperDashboardPage } from './HelperDashboardPlaceholder'
-export { AdminDashboardPage } from './AdminDashboardPlaceholder'

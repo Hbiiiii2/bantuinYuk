@@ -4,8 +4,69 @@ use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
 
-// Home
-$routes->get('/', 'Home::index');
+// ============================================================
+// WEB ROUTES (Pure PHP Views + Tailwind)
+// ============================================================
+$routes->get('/', '\App\Controllers\Web\HomeController::index');
+
+// Auth Web Routes
+$routes->get('login', '\App\Controllers\Web\AuthController::login', ['as' => 'login']);
+$routes->post('login', '\App\Controllers\Web\AuthController::loginAction');
+$routes->get('register', '\App\Controllers\Web\AuthController::register', ['as' => 'register']);
+$routes->post('register', '\App\Controllers\Web\AuthController::registerAction');
+$routes->post('logout', '\App\Controllers\Web\AuthController::logoutAction', ['as' => 'logout']);
+
+// Dashboard Web Routes (Protected by Session)
+$routes->group('', ['filter' => 'session'], function ($routes) {
+    $routes->get('user/dashboard', '\App\Controllers\Web\DashboardController::user');
+    $routes->get('helper/dashboard', '\App\Controllers\Web\DashboardController::helper');
+    
+    // Web Profile
+    $routes->get('profile', '\App\Controllers\Web\ProfileController::index');
+    $routes->get('profile/edit', '\App\Controllers\Web\ProfileController::edit');
+    $routes->post('profile/update', '\App\Controllers\Web\ProfileController::update');
+    
+    // Web User Tasks
+    $routes->get('user/tasks', '\App\Controllers\Web\UserTaskController::index');
+    $routes->get('user/tasks/create', '\App\Controllers\Web\UserTaskController::create');
+    $routes->post('user/tasks/store', '\App\Controllers\Web\UserTaskController::store');
+    $routes->get('user/tasks/(:num)', '\App\Controllers\Web\UserTaskController::detail/$1');
+    $routes->post('user/tasks/(:num)/complete', '\App\Controllers\Web\UserTaskController::complete/$1');
+    $routes->post('user/tasks/(:num)/rate', '\App\Controllers\Web\UserTaskController::rateHelper/$1');
+    
+    // Web Helper Tasks
+    $routes->get('helper/tasks/explore', '\App\Controllers\Web\HelperTaskController::explore');
+    $routes->get('helper/tasks/my-tasks', '\App\Controllers\Web\HelperTaskController::myTasks');
+    $routes->get('helper/tasks/(:num)', '\App\Controllers\Web\HelperTaskController::detail/$1');
+    $routes->post('helper/tasks/(:num)/take', '\App\Controllers\Web\HelperTaskController::take/$1');
+    $routes->post('helper/tasks/(:num)/upload-progress', '\App\Controllers\Web\HelperTaskController::uploadProgress/$1');
+    $routes->post('helper/tasks/(:num)/rate', '\App\Controllers\Web\HelperTaskController::rateUser/$1');
+    
+    // Web Wallet
+    $routes->get('wallet', '\App\Controllers\Web\WalletController::index');
+    $routes->post('wallet/topup', '\App\Controllers\Web\WalletController::topup');
+
+    // Web Admin Routes
+    $routes->get('admin/dashboard', '\App\Controllers\Web\AdminController::dashboard');
+    $routes->get('admin/users', '\App\Controllers\Web\AdminController::users');
+    $routes->get('admin/helpers', '\App\Controllers\Web\AdminController::helpers');
+    $routes->get('admin/tasks', '\App\Controllers\Web\AdminController::tasks');
+    $routes->get('admin/disputes', '\App\Controllers\Web\AdminController::disputes');
+    $routes->post('admin/disputes/(:num)/resolve', '\App\Controllers\Web\AdminController::resolveDispute/$1');
+    $routes->post('admin/disputes/(:num)/reject', '\App\Controllers\Web\AdminController::rejectDispute/$1');
+    $routes->post('admin/toggle-user/(:num)', '\App\Controllers\Web\AdminController::toggleUserStatus/$1');
+
+    // Web Notifications
+    $routes->get('notifications', '\App\Controllers\Web\NotificationController::index');
+    $routes->post('notifications/(:num)/read', '\App\Controllers\Web\NotificationController::markAsRead/$1');
+    $routes->post('notifications/mark-all-read', '\App\Controllers\Web\NotificationController::markAllAsRead');
+
+    // Web Pusat Resolusi (Disputes)
+    $routes->get('disputes', '\App\Controllers\Web\DisputeController::index');
+    $routes->get('disputes/create/(:num)', '\App\Controllers\Web\DisputeController::create/$1');
+    $routes->post('disputes/store/(:num)', '\App\Controllers\Web\DisputeController::store/$1');
+    $routes->get('disputes/(:num)', '\App\Controllers\Web\DisputeController::detail/$1');
+});
 
 // ============================================================
 // AUTH ROUTES (Public - No Auth Required + Rate Limiting)
@@ -106,6 +167,11 @@ $routes->group('api/v1/notifications', ['filter' => 'tokens'], function ($routes
 });
 
 // ============================================================
+// CATEGORY ROUTES (Public - Get Categories)
+// ============================================================
+$routes->get('api/v1/categories', 'AdminController::categories', ['filter' => 'cors']);
+
+// ============================================================
 // DISPUTE ROUTES (Protected - Token Required)
 // ============================================================
 $routes->group('api/v1/disputes', ['filter' => 'tokens'], function ($routes) {
@@ -144,8 +210,7 @@ $routes->group('api/v1/admin', ['filter' => 'tokens', 'filter' => 'role:admin'],
     // Wallet Monitoring
     $routes->get('wallets', 'AdminController::wallets');
     
-    // Categories
-    $routes->get('categories', 'AdminController::categories');
+    // Categories (admin only)
     $routes->post('categories', 'AdminController::createCategory');
     $routes->put('categories/(:num)', 'AdminController::updateCategory/$1');
     $routes->delete('categories/(:num)', 'AdminController::deleteCategory/$1');
