@@ -35,6 +35,13 @@ class AuthController extends BaseController
         }
 
         $user = auth()->user();
+        
+        // Check if user is blocked/suspended
+        if ($user->status === 'suspended' || empty($user->active)) {
+            auth('session')->logout();
+            return redirect()->route('login')->withInput()->with('error', 'Akun Anda telah diblokir. Silakan hubungi admin.');
+        }
+
         $role = $user->getGroups()[0] ?? 'user';
         
         if ($role === 'admin') {

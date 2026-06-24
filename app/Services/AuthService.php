@@ -145,8 +145,8 @@ class AuthService extends BaseService
         $user = $result->extraInfo();
 
         // Check if account is active
-        if ($user->status === 'suspended') {
-            throw BusinessException::forbidden('Account is suspended');
+        if ($user->status === 'suspended' || empty($user->active)) {
+            throw BusinessException::forbidden('Account is suspended or blocked by admin');
         }
 
         // Generate access token using Shield

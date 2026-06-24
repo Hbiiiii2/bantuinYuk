@@ -288,6 +288,17 @@
              <a href="https://codeigniter.com/contribute" target="_blank">
              join us</a> ?</p>
 
+        <h2>
+            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect x='48' y='96' width='416' height='320' rx='40' ry='40' class="svg-stroke" /><path d='M112 160l144 112 144-112' class="svg-stroke" /></svg>
+            Contact Admin
+        </h2>
+
+        <p>Butuh bantuan atau punya pertanyaan? Jangan ragu untuk menghubungi admin kami melalui:</p>
+        <ul style="list-style-type: disc; margin-left: 20px;">
+            <li style="margin-bottom: 10px;">WhatsApp: <a href="https://wa.me/6281998043342" target="_blank">wa.me/6281998043342</a></li>
+            <li>Email: <a href="mailto:cs@bantuinyuk.com">cs@bantuinyuk.com</a></li>
+        </ul>
+
     </section>
 
 </div>

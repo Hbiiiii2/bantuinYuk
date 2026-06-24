@@ -120,6 +120,26 @@
     </div>
 </div>
 
+<!-- Contact Section -->
+<div class="py-24 bg-slate-50 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-primary-600 font-bold tracking-wide uppercase text-sm mb-3">Hubungi Kami</h2>
+        <h3 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6">Butuh Bantuan Lebih Lanjut?</h3>
+        <p class="text-lg text-slate-600 mb-12 max-w-2xl mx-auto">Tim admin kami siap membantu menjawab pertanyaan atau menyelesaikan kendala yang Anda hadapi.</p>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <a href="https://wa.me/6281998043342" target="_blank" class="flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 bg-green-500 text-white rounded-full font-bold shadow-lg shadow-green-500/30 hover:bg-green-600 hover:-translate-y-1 transition-all duration-300">
+                <i class="ph-bold ph-whatsapp-logo text-2xl"></i>
+                wa.me/6281998043342
+            </a>
+            <a href="mailto:cs@bantuinyuk.com" class="flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 bg-white text-slate-700 border-2 border-slate-200 rounded-full font-bold hover:border-slate-300 hover:bg-slate-100 hover:-translate-y-1 transition-all duration-300">
+                <i class="ph-bold ph-envelope-simple text-2xl"></i>
+                cs@bantuinyuk.com
+            </a>
+        </div>
+    </div>
+</div>
+
 <!-- CTA Section -->
 <div class="relative py-20 bg-slate-900 overflow-hidden rounded-t-[3rem]">
     <div class="absolute inset-0 w-full h-full opacity-30 mix-blend-overlay">
