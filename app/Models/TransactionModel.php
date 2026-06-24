@@ -21,13 +21,13 @@ class TransactionModel extends Model
         'description'
     ];
 
-    const TYPE_TASK_PAYMENT  = 'task_payment';
+    const TYPE_TASK_PAYMENT  = 'payment';
     const TYPE_WITHDRAW      = 'withdraw';
     const TYPE_REFUND        = 'refund';
-    const TYPE_ADJUSTMENT    = 'adjustment';
+    const TYPE_ADJUSTMENT    = 'topup';
 
     const STATUS_PENDING   = 'pending';
-    const STATUS_COMPLETED = 'completed';
+    const STATUS_COMPLETED = 'success';
     const STATUS_FAILED    = 'failed';
     const STATUS_CANCELLED = 'cancelled';
 

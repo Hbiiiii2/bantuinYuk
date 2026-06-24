@@ -179,7 +179,7 @@ class UserTaskController extends BaseController
         $userId = auth()->id();
         $task = $this->taskModel->where('id', $taskId)->where('user_id', $userId)->first();
         
-        if ($task && $task['status'] === 'in_progress') {
+        if ($task && in_array($task['status'], ['in_progress', 'waiting_approval'])) {
             if (empty($task['photo_start']) || empty($task['photo_end'])) {
                 return redirect()->back()->with('error', 'Tidak dapat menyelesaikan pekerjaan. Helper belum mengunggah foto progress secara lengkap.');
             }

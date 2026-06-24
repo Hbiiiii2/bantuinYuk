@@ -50,6 +50,7 @@ $routes->group('', ['filter' => 'session'], function ($routes) {
     // Web Wallet
     $routes->get('wallet', '\App\Controllers\Web\WalletController::index');
     $routes->post('wallet/topup', '\App\Controllers\Web\WalletController::topup');
+    $routes->post('wallet/withdraw', '\App\Controllers\Web\WalletController::withdraw');
 
     // Web Admin Routes
     $routes->get('admin/dashboard', '\App\Controllers\Web\AdminController::dashboard');

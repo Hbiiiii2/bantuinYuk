@@ -540,6 +540,15 @@ class TaskService extends BaseService
                 $helper['name'] ?? 'Helper'
             );
 
+            // Send notification to helper
+            $this->notificationService->create(
+                $helperId,
+                \App\Models\NotificationModel::TYPE_TASK_SUBMITTED ?? 'task_submitted',
+                'Pekerjaan Selesai',
+                "Anda telah berhasil mengirimkan bukti penyelesaian untuk pekerjaan \"{$task['title']}\". Menunggu persetujuan User.",
+                ['task_id' => $taskId]
+            );
+
             return $this->getTaskById($taskId);
         });
 

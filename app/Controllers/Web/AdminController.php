@@ -183,6 +183,7 @@ class AdminController extends BaseController
         $task = $taskModel->find($dispute['task_id']);
         $adminNote = $this->request->getPost('admin_note');
         $fundAction = $this->request->getPost('fund_action'); // 'refund' or 'release'
+        $suspendHelper = $this->request->getPost('suspend_helper');
         
         $db = \Config\Database::connect();
         $db->transStart();

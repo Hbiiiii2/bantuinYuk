@@ -111,7 +111,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <p class="text-sm font-bold text-red-800 mb-1">Nama Lengkap (Sesuai KTP)</p>
-                        <p class="text-sm text-red-900 bg-white px-3 py-2 rounded-lg border border-red-200"><?= esc($helperProfile['ktp_name'] ?? $helperUser['name']) ?></p>
+                        <p class="text-sm text-red-900 bg-white px-3 py-2 rounded-lg border border-red-200"><?= esc($helperProfile['ktp_name'] ?? $helperUser->name) ?></p>
                     </div>
                     <div>
                         <p class="text-sm font-bold text-red-800 mb-1">Nomor Induk Kependudukan (NIK)</p>
@@ -119,7 +119,7 @@
                     </div>
                     <div>
                         <p class="text-sm font-bold text-red-800 mb-1">Nomor Telepon / Kontak</p>
-                        <p class="text-sm text-red-900 bg-white px-3 py-2 rounded-lg border border-red-200"><?= esc($helperUser['phone'] ?? '-') ?></p>
+                        <p class="text-sm text-red-900 bg-white px-3 py-2 rounded-lg border border-red-200"><?= esc($helperUser->phone ?? '-') ?></p>
                     </div>
                     <div class="md:col-span-2">
                         <p class="text-sm font-bold text-red-800 mb-1">Alamat Lengkap</p>
@@ -189,7 +189,7 @@
                     </div>
 
                     <!-- Suspend Helper -->
-                    <?php if (isset($helperUser) && $helperUser['active'] == 1): ?>
+                    <?php if (isset($helperUser) && $helperUser->active == 1): ?>
                     <div class="bg-red-50 border border-red-200 rounded-xl p-4">
                         <label class="relative flex items-start cursor-pointer">
                             <div class="flex items-center h-5">

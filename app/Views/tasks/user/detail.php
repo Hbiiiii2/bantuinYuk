@@ -30,6 +30,11 @@
                     <span class="w-2 h-2 rounded-full bg-amber-500 mr-2"></span>
                     Sedang Dikerjakan
                 </span>
+            <?php elseif ($task['status'] === 'waiting_approval'): ?>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 mr-2 animate-pulse"></span>
+                    Menunggu Persetujuan
+                </span>
             <?php elseif ($task['status'] === 'completed'): ?>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-slate-100 text-slate-600 border border-slate-200">
                     <i class="ph-bold ph-check mr-2"></i> Selesai
@@ -69,7 +74,7 @@
                 </div>
             </div>
 
-            <?php if (in_array($task['status'], ['in_progress', 'completed']) && $task['helper_id']): ?>
+            <?php if (in_array($task['status'], ['in_progress', 'waiting_approval', 'completed']) && $task['helper_id']): ?>
                 <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
                     <h3 class="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-4">Pantauan Progress Pekerjaan</h3>
                     
@@ -125,7 +130,7 @@
                 </div>
             <?php endif; ?>
             
-            <?php if (in_array($task['status'], ['open', 'in_progress'])): ?>
+            <?php if (in_array($task['status'], ['open', 'in_progress', 'waiting_approval'])): ?>
                 <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
                     <h3 class="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-4">Aksi</h3>
                     
@@ -157,7 +162,7 @@
                                 </div>
                             </div>
                         </div>
-                    <?php elseif ($task['status'] === 'in_progress'): ?>
+                    <?php elseif (in_array($task['status'], ['in_progress', 'waiting_approval'])): ?>
                         <?php if (!empty($task['photo_start']) && !empty($task['photo_end'])): ?>
                             <p class="text-sm text-slate-500 mb-4">Jika Anda merasa puas dengan hasil pekerjaan yang difoto, silakan selesaikan task ini.</p>
                             <form action="<?= base_url('/user/tasks/' . $task['id'] . '/complete') ?>" method="post">

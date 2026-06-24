@@ -165,7 +165,31 @@ class HelperTaskController extends BaseController
 
             $updatedTask = $this->taskModel->find($id);
             if (!empty($updatedTask['photo_start']) && !empty($updatedTask['photo_end'])) {
+                
+                if ($updatedTask['status'] === 'in_progress') {
+                    $this->taskModel->update($id, ['status' => 'waiting_approval']);
+                    
+                    // Log status history
+                    $historyModel = new \App\Models\TaskStatusHistoryModel();
+                    $historyModel->insert([
+                        'task_id' => $id,
+                        'status' => 'waiting_approval',
+                        'created_by' => $userId,
+                        'note' => 'Pekerjaan selesai, foto lengkap diunggah'
+                    ]);
+                }
+
+                // Notify User
                 $this->notificationService->notifyTaskSubmitted($id, $updatedTask['title'], $updatedTask['user_id'], $userId, $user->name ?? 'Helper');
+                
+                // Notify Helper
+                $this->notificationService->create(
+                    $userId,
+                    'task_submitted',
+                    'Pekerjaan Selesai',
+                    "Anda telah berhasil mengirimkan bukti penyelesaian untuk pekerjaan \"{$updatedTask['title']}\". Menunggu persetujuan User.",
+                    ['task_id' => $id]
+                );
             }
 
             return redirect()->back()->with('message', 'Foto progress berhasil diunggah.');

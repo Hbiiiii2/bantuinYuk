@@ -42,15 +42,28 @@
                         </div>
                     <?php endif; ?>
 
-                    <div class="pt-6 border-t border-white/20">
-                        <p class="text-white text-sm font-bold mb-3">Simulasi Topup</p>
-                        <form action="<?= base_url('/wallet/topup') ?>" method="post" class="flex gap-2">
-                            <?= csrf_field() ?>
-                            <input type="number" name="amount" min="10000" step="10000" placeholder="Nominal" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500" required>
-                            <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
-                                Topup
-                            </button>
-                        </form>
+                    <div class="pt-6 border-t border-white/20 space-y-4">
+                        <div>
+                            <p class="text-white text-sm font-bold mb-2">Simulasi Topup</p>
+                            <form action="<?= base_url('/wallet/topup') ?>" method="post" class="flex gap-2">
+                                <?= csrf_field() ?>
+                                <input type="number" name="amount" min="10000" step="1000" placeholder="Nominal (Min 10rb)" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                                <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
+                                    Topup
+                                </button>
+                            </form>
+                        </div>
+                        <div class="pt-4 border-t border-white/10">
+                            <p class="text-white text-sm font-bold mb-2">Tarik Dana (Withdraw)</p>
+                            <form action="<?= base_url('/wallet/withdraw') ?>" method="post" class="space-y-3">
+                                <?= csrf_field() ?>
+                                <input type="number" name="amount" min="10000" step="1000" placeholder="Nominal Tarik (Min 10rb)" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                                <input type="text" name="bank_info" placeholder="Bank & Rekening (Cth: BCA 123456 Budi)" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                                <button type="submit" class="w-full bg-white text-slate-900 hover:bg-slate-100 px-4 py-3 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
+                                    <i class="ph-bold ph-bank"></i> Tarik Dana
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,10 +88,21 @@
                     <?php else: ?>
                         <ul class="divide-y divide-slate-100 max-h-[500px] overflow-y-auto">
                             <?php foreach ($transactions as $trx): ?>
+                                <?php 
+                                    $isIncoming = false;
+                                    if (in_array($trx['type'], ['topup', 'adjustment', 'refund'])) {
+                                        $isIncoming = true;
+                                    } elseif (in_array($trx['type'], ['payment', 'task_payment'])) {
+                                        // If it's income for helper
+                                        if (strpos(strtolower($trx['description']), 'pendapatan') !== false) {
+                                            $isIncoming = true;
+                                        }
+                                    }
+                                ?>
                                 <li class="p-6 hover:bg-slate-50 transition-colors">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-4">
-                                            <?php if ($trx['type'] === 'adjustment' || $trx['type'] === 'task_payment'): ?>
+                                            <?php if ($isIncoming): ?>
                                                 <div class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center shrink-0">
                                                     <i class="ph-bold ph-arrow-down-left"></i>
                                                 </div>
@@ -99,13 +123,13 @@
                                         </div>
                                         
                                         <div class="text-right">
-                                            <?php if ($trx['type'] === 'adjustment' || $trx['type'] === 'task_payment'): ?>
+                                            <?php if ($isIncoming): ?>
                                                 <p class="text-sm font-bold text-green-600">+ Rp <?= number_format($trx['amount'], 0, ',', '.') ?></p>
                                             <?php else: ?>
                                                 <p class="text-sm font-bold text-slate-900">- Rp <?= number_format($trx['amount'], 0, ',', '.') ?></p>
                                             <?php endif; ?>
                                             
-                                            <?php if ($trx['status'] === 'completed'): ?>
+                                            <?php if (in_array($trx['status'], ['success', 'completed'])): ?>
                                                 <p class="text-xs font-bold text-green-600 mt-1">Berhasil</p>
                                             <?php elseif ($trx['status'] === 'pending'): ?>
                                                 <p class="text-xs font-bold text-amber-600 mt-1">Pending</p>
