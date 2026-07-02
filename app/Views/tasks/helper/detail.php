@@ -30,6 +30,11 @@
                     <span class="w-2 h-2 rounded-full bg-amber-500 mr-2"></span>
                     Sedang Dikerjakan
                 </span>
+            <?php elseif ($task['status'] === 'waiting_approval'): ?>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 mr-2 animate-pulse"></span>
+                    Menunggu Persetujuan
+                </span>
             <?php elseif ($task['status'] === 'completed'): ?>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-slate-100 text-slate-600 border border-slate-200">
                     <i class="ph-bold ph-check mr-2"></i> Selesai
@@ -62,7 +67,7 @@
                 </div>
             </div>
 
-            <?php if ($task['helper_id'] == auth()->id() && in_array($task['status'], ['in_progress', 'completed'])): ?>
+            <?php if ($task['helper_id'] == auth()->id() && in_array($task['status'], ['in_progress', 'waiting_approval', 'completed'])): ?>
                 <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
                     <h3 class="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-4">Progress Pekerjaan (Validasi)</h3>
                     
@@ -225,7 +230,7 @@
                         </div>
                     </div>
                     
-                    <?php if ($task['helper_id'] == auth()->id() && $task['status'] === 'in_progress'): ?>
+                    <?php if ($task['helper_id'] == auth()->id() && in_array($task['status'], ['in_progress', 'waiting_approval'])): ?>
                         <div class="bg-green-50 rounded-xl p-4 border border-green-100">
                             <p class="text-xs font-bold text-green-800 mb-1">Kontak yang dapat dihubungi:</p>
                             <div class="flex items-center gap-2 text-green-700 font-medium">
@@ -242,6 +247,13 @@
                     <div class="flex items-start gap-3">
                         <i class="ph-fill ph-info text-amber-500 text-xl shrink-0"></i>
                         <p class="text-sm text-amber-800">Anda sedang mengerjakan task ini. Silakan hubungi pembuat task dan selesaikan pekerjaan. Pembuat task akan menandai pekerjaan ini sebagai selesai.</p>
+                    </div>
+                </div>
+            <?php elseif ($task['helper_id'] == auth()->id() && $task['status'] === 'waiting_approval'): ?>
+                <div class="bg-blue-50 rounded-3xl border border-blue-100 p-6">
+                    <div class="flex items-start gap-3">
+                        <i class="ph-fill ph-info text-blue-500 text-xl shrink-0"></i>
+                        <p class="text-sm text-blue-800">Pekerjaan telah disubmit. Menunggu pembuat task untuk menyetujui dan menyelesaikan pembayaran.</p>
                     </div>
                 </div>
             <?php endif; ?>

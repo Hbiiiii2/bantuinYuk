@@ -107,6 +107,15 @@ class HelperTaskController extends BaseController
             return redirect()->back()->with('error', 'Pekerjaan tidak tersedia.');
         }
 
+        // Cek apakah helper masih memiliki pekerjaan yang belum selesai
+        $activeTask = $this->taskModel->where('helper_id', $userId)
+                                      ->whereIn('status', ['in_progress', 'waiting_approval'])
+                                      ->first();
+        
+        if ($activeTask) {
+            return redirect()->back()->with('error', 'Anda masih memiliki pekerjaan yang belum diselesaikan. Selesaikan pekerjaan Anda saat ini sebelum mengambil pekerjaan baru.');
+        }
+
         // Update task status and helper_id
         $this->taskModel->update($id, [
             'status'    => 'in_progress',
